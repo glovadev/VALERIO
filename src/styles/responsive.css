@@ -1,0 +1,464 @@
+/* ===================================================
+   VALERIOO - Responsive Adjustments & Breakpoints
+   =================================================== */
+
+/* 1. Large Tablets & Small Laptops (992px to 1199px) */
+@media (max-width: 1199px) {
+  .header-nav-left,
+  .header-nav-right {
+    gap: 1.4rem !important;
+  }
+
+  .header-nav-link {
+    font-size: 0.68rem !important;
+    letter-spacing: 0.16em !important;
+  }
+
+  .header-brand-center {
+    padding: 0 0.8rem !important;
+  }
+
+  .hero-watermark-text {
+    font-size: clamp(3.8rem, 12vw, 10rem) !important;
+  }
+
+  .collections-right-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.25rem !important;
+  }
+
+  .bestsellers-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 2rem !important;
+  }
+
+  .newsletter-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2.5rem !important;
+  }
+
+  .newsletter-product-col {
+    order: -1;
+    grid-column: span 2;
+  }
+}
+
+/* 2. Tablets (768px to 991px) */
+@media (max-width: 991px) {
+  .container, .container-narrow {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+
+  .header-inner {
+    display: grid !important;
+    grid-template-columns: 44px 1fr 44px !important;
+    align-items: center !important;
+    height: var(--header-height) !important;
+    gap: 0.5rem !important;
+  }
+
+  .header-nav-left,
+  .header-nav-right,
+  .desktop-nav,
+  .desktop-utilities {
+    display: none !important;
+  }
+
+  .mobile-nav-toggle {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  .mobile-action-right {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+  }
+
+  .header-brand-center {
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .header-brand-name {
+    font-size: 1.25rem !important;
+    letter-spacing: 0.18em !important;
+  }
+
+  .header-brand-tagline {
+    font-size: 0.48rem !important;
+    letter-spacing: 0.24em !important;
+  }
+
+  /* Hero on Tablets */
+  .hero-section {
+    min-height: 600px !important;
+    height: 75vh !important;
+  }
+
+  .hero-panorama-bg,
+  .hero-cutout-layer {
+    object-position: 62% bottom !important;
+  }
+
+  .hero-watermark-text {
+    font-size: clamp(3.2rem, 10vw, 5.5rem) !important;
+    letter-spacing: 0.12em !important;
+  }
+
+  .hero-copy-container {
+    padding-top: 7rem !important;
+  }
+
+  .hero-copy-box {
+    max-width: 380px !important;
+  }
+
+  /* Collections on Tablets */
+  .collections-container {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+    text-align: center;
+  }
+
+  .collections-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .collections-right-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.25rem !important;
+  }
+
+  /* Editorial Banners */
+  .art-banner-grid,
+  .philosophy-banner-grid,
+  .campaign-banner-grid {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+  }
+
+  .art-image-col,
+  .campaign-image-col {
+    min-height: 280px !important;
+    height: 320px !important;
+  }
+
+  .campaign-banner-grid .campaign-image-col {
+    order: 1 !important;
+  }
+
+  .campaign-banner-grid .campaign-text-col {
+    order: 2 !important;
+  }
+
+  .feature-bar-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 2rem !important;
+  }
+
+  .feature-item {
+    border-right: none !important;
+    padding: 0 1rem !important;
+  }
+
+  .footer-main-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 3rem !important;
+  }
+}
+
+/* 3. Mobile Devices (< 768px) */
+@media (max-width: 767px) {
+  :root {
+    --header-height: 68px;
+  }
+
+  .container, .container-narrow {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+
+  /* ==============================================
+     HERO SECTION - MOBILE OPTIMIZED
+     Bottle is horizontally centered at 63.5%
+     Copy is elegantly centered above the bottle
+     ============================================== */
+  .hero-section {
+    min-height: 620px !important;
+    height: 88vh !important;
+    max-height: 760px !important;
+    align-items: flex-start !important;
+    padding-top: 0 !important;
+  }
+
+  .hero-panorama-bg,
+  .hero-cutout-layer {
+    object-fit: cover !important;
+    object-position: 63.5% bottom !important;
+  }
+
+  .hero-giant-watermark {
+    top: 0.5rem !important;
+    padding: 0 0.5rem !important;
+  }
+
+  .hero-watermark-text {
+    font-size: clamp(2rem, 10.5vw, 3.2rem) !important;
+    letter-spacing: 0.10em !important;
+    line-height: 1 !important;
+  }
+
+  .hero-copy-container {
+    padding-top: 2.8rem !important;
+    padding-bottom: 1rem !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .hero-copy-box {
+    max-width: 320px !important;
+    text-align: center !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.58rem !important;
+    letter-spacing: 0.24em !important;
+    margin-bottom: 0.25rem !important;
+    color: var(--color-muted-brown) !important;
+  }
+
+  .hero-headline {
+    font-size: clamp(1.18rem, 4.8vw, 1.45rem) !important;
+    line-height: 1.22 !important;
+    letter-spacing: 0.03em !important;
+    margin-bottom: 0.6rem !important;
+    color: var(--color-near-black) !important;
+  }
+
+  .hero-headline-desktop {
+    display: none !important;
+  }
+
+  .hero-headline-mobile {
+    display: block !important;
+  }
+
+  .hero-cta-wrap {
+    display: flex;
+    justify-content: center;
+  }
+
+  .hero-cta-wrap a {
+    font-size: 0.66rem !important;
+    letter-spacing: 0.18em !important;
+  }
+
+  /* ==============================================
+     COLLECTIONS SECTION - 2x2 LUXURY MOBILE GRID
+     ============================================== */
+  .collections-section {
+    padding-top: 3.5rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+
+  .collections-container {
+    grid-template-columns: 1fr !important;
+    gap: 1.75rem !important;
+    text-align: center;
+  }
+
+  .collections-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .collections-left h2 {
+    font-size: clamp(1.6rem, 6vw, 2.2rem) !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .collections-right-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  .collection-card {
+    aspect-ratio: 3 / 4.2 !important;
+  }
+
+  .collection-card-label {
+    padding: 0.85rem 0.35rem !important;
+  }
+
+  .collection-card-title {
+    font-size: 0.82rem !important;
+    letter-spacing: 0.16em !important;
+  }
+
+  /* ==============================================
+     BESTSELLERS SECTION - 2-COL MOBILE PACKSHOTS
+     ============================================== */
+  .bestsellers-section {
+    padding-top: 3.5rem !important;
+    padding-bottom: 4rem !important;
+  }
+
+  .bestsellers-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.25rem 0.75rem !important;
+  }
+
+  .product-image-container {
+    margin-bottom: 0.75rem !important;
+  }
+
+  .product-name {
+    font-size: 0.88rem !important;
+    letter-spacing: 0.12em !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .product-subtitle {
+    font-size: 0.58rem !important;
+    letter-spacing: 0.14em !important;
+    margin-bottom: 0.35rem !important;
+  }
+
+  .product-price {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.6rem !important;
+  }
+
+  .product-card button {
+    padding: 8px 10px !important;
+    font-size: 0.64rem !important;
+    letter-spacing: 0.14em !important;
+    min-height: 38px;
+  }
+
+  /* ==============================================
+     EDITORIAL BANNERS (PHILOSOPHY & CAMPAIGN)
+     ============================================== */
+  .philosophy-section,
+  .campaign-section {
+    padding-top: 2rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+
+  .philosophy-banner-grid,
+  .campaign-banner-grid {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+  }
+
+  .art-image-col,
+  .campaign-image-col {
+    min-height: 240px !important;
+    height: 280px !important;
+  }
+
+  .editorial-box {
+    padding: 2.25rem 1.25rem !important;
+  }
+
+  .editorial-box h2 {
+    font-size: clamp(1.6rem, 5.5vw, 2.2rem) !important;
+  }
+
+  /* ==============================================
+     TRUST FEATURES BAR (2-COL ON MOBILE)
+     ============================================== */
+  .feature-bar-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.5rem 0.75rem !important;
+  }
+
+  .feature-item {
+    border-right: none !important;
+    padding: 0 0.5rem !important;
+    text-align: center;
+  }
+
+  .feature-item span {
+    font-size: 0.65rem !important;
+  }
+
+  /* ==============================================
+     NEWSLETTER & CONCIERGE
+     ============================================== */
+  .newsletter-grid {
+    grid-template-columns: 1fr !important;
+    text-align: center;
+    gap: 2.25rem !important;
+  }
+
+  .newsletter-form-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .newsletter-social-col {
+    padding-left: 0 !important;
+    align-items: center !important;
+  }
+
+  .newsletter-input-group {
+    max-width: 320px !important;
+    margin: 0 auto;
+  }
+
+  /* ==============================================
+     FOOTER & DRAWERS
+     ============================================== */
+  .footer-main-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2rem 1.5rem !important;
+  }
+
+  .cart-drawer {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .product-modal-container {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* 4. Small Mobile (< 480px) */
+@media (max-width: 479px) {
+  .hero-watermark-text {
+    font-size: clamp(1.9rem, 10.5vw, 2.8rem) !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  .hero-headline {
+    font-size: 1.35rem !important;
+  }
+
+  .collections-right-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.6rem !important;
+  }
+
+  .bestsellers-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem 0.6rem !important;
+  }
+
+  .footer-main-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+}

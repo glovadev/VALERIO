@@ -1,0 +1,56 @@
+/* ===================================================
+   VALERIOO - CSS Custom Properties / Design Tokens
+   =================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400;1,6..96,600&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Color Palette - Luxury Warm Editorial */
+  --color-cream: #F1ECE3;
+  --color-cream-light: #F7F4EF;
+  --color-cream-subtle: #FAF8F5;
+  --color-beige: #E5D6C2;
+  --color-beige-dark: #D4C3AC;
+  --color-near-black: #181614;
+  --color-dark-brown: #2B211A;
+  --color-muted-brown: #756A5E;
+  --color-brass: #AD8A52;
+  --color-brass-hover: #94723E;
+  --color-gold-light: #C9A96E;
+  --color-border: rgba(43, 33, 26, 0.12);
+  --color-border-dark: rgba(43, 33, 26, 0.22);
+  --color-border-subtle: rgba(43, 33, 26, 0.06);
+
+  /* Typography */
+  --font-serif: 'Bodoni Moda', 'Didot', 'Playfair Display', Georgia, serif;
+  --font-sans: 'Montserrat', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Spacing */
+  --space-unit: 8px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+  --space-5xl: 128px;
+
+  /* Layout */
+  --max-width: 1440px;
+  --max-width-narrow: 1140px;
+  --header-height: 84px;
+  --header-height-mobile: 68px;
+
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Shadows */
+  --shadow-subtle: 0 4px 20px rgba(24, 22, 20, 0.04);
+  --shadow-medium: 0 12px 35px rgba(24, 22, 20, 0.08);
+  --shadow-elevated: 0 25px 60px rgba(24, 22, 20, 0.15);
+  --shadow-card: 0 8px 30px rgba(43, 33, 26, 0.06);
+}

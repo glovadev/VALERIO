@@ -1,0 +1,486 @@
+/* ===================================================
+   VALERIOO - Global Base & Luxury Styling
+   =================================================== */
+
+@import './variables.css';
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-cream);
+  color: var(--color-near-black);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-cream);
+  color: var(--color-near-black);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Custom Luxury Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-beige-dark);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-brown);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-dark-brown);
+  color: var(--color-cream);
+}
+
+/* Typography Defaults */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--color-near-black);
+  line-height: 1.15;
+}
+
+p {
+  color: var(--color-muted-brown);
+  font-size: 0.95rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-fast), opacity var(--transition-fast);
+}
+
+button {
+  font-family: var(--font-sans);
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+  transition: all var(--transition-smooth);
+}
+
+input {
+  font-family: var(--font-sans);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Layout Containers */
+.container {
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.container-narrow {
+  max-width: var(--max-width-narrow);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+/* ==========================================================================
+   Site Header & Navigation Layout
+   ========================================================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background-color: var(--color-cream);
+  border-bottom: 1px solid rgba(26, 23, 20, 0.08);
+  transition: background-color 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.site-header.header-scrolled {
+  background-color: rgba(241, 236, 227, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.header-inner {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  height: var(--header-height);
+  width: 100%;
+  gap: 1.5rem;
+}
+
+/* Left & Right Desktop Nav Flanks */
+.header-nav-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2.2rem;
+}
+
+.header-nav-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2.2rem;
+}
+
+/* Nav Links & Buttons */
+.header-nav-link {
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-near-black);
+  opacity: 0.88;
+  text-decoration: none;
+  position: relative;
+  padding: 0.5rem 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1;
+  transition: color 0.25s ease, opacity 0.25s ease;
+}
+
+.header-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background-color: var(--color-brass);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.header-nav-link:hover {
+  color: var(--color-brass);
+  opacity: 1;
+}
+
+.header-nav-link:hover::after {
+  width: 100%;
+}
+
+.header-nav-link svg {
+  transition: transform 0.2s ease, stroke 0.2s ease;
+}
+
+.header-nav-link:hover svg {
+  stroke: var(--color-brass);
+  transform: scale(1.08);
+}
+
+/* Center Brand Identity */
+.header-brand-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 1.5rem;
+}
+
+.header-brand-link {
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header-brand-name {
+  font-family: var(--font-serif);
+  font-size: clamp(1.3rem, 2vw, 1.65rem);
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-near-black);
+  line-height: 1.1;
+  display: block;
+  transition: color 0.2s ease;
+}
+
+.header-brand-name:hover {
+  color: var(--color-brass);
+}
+
+.header-brand-tagline {
+  font-family: var(--font-sans);
+  font-size: 0.52rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-muted-brown);
+  display: block;
+  margin-top: 3px;
+}
+
+/* Mobile Toggle & Search Controls (Hidden on desktop) */
+.mobile-nav-toggle,
+.mobile-action-right {
+  display: none;
+}
+
+/* Editorial Links / Action Arrows */
+.editorial-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-near-black);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--color-near-black);
+  transition: all var(--transition-smooth);
+}
+
+.editorial-link .arrow {
+  transition: transform var(--transition-fast);
+  display: inline-block;
+}
+
+.editorial-link:hover {
+  color: var(--color-brass);
+  border-bottom-color: var(--color-brass);
+}
+
+.editorial-link:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* Luxury Button Styles */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.85rem 2rem;
+  background-color: var(--color-dark-brown);
+  color: var(--color-cream);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-dark-brown);
+  transition: all var(--transition-smooth);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-near-black);
+  border-color: var(--color-near-black);
+  color: #FFFFFF;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.85rem 2rem;
+  background-color: transparent;
+  color: var(--color-dark-brown);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-dark-brown);
+  transition: all var(--transition-smooth);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-dark-brown);
+  color: var(--color-cream);
+}
+
+/* Eyebrow Label */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-muted-brown);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+/* Keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brass);
+  outline-offset: 3px;
+}
+
+/* ===================================================
+   Hero Section Base Styles (Desktop)
+   =================================================== */
+.hero-section {
+  position: relative;
+  width: 100%;
+  min-height: clamp(560px, 78vh, 820px);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-cream);
+}
+
+.hero-panorama-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  z-index: 1;
+  display: block;
+}
+
+.hero-giant-watermark {
+  position: absolute;
+  top: clamp(1.2rem, 4vw, 3.4rem);
+  left: 0;
+  right: 0;
+  width: 100%;
+  text-align: center;
+  z-index: 2;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero-watermark-text {
+  font-family: var(--font-serif);
+  font-size: clamp(4.2rem, 13.2vw, 12.8rem);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-near-black);
+  line-height: 0.9;
+  display: block;
+  width: 100%;
+}
+
+.hero-cutout-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  z-index: 3;
+  pointer-events: none;
+  user-select: none;
+  display: block;
+}
+
+.hero-copy-container {
+  position: relative;
+  z-index: 4;
+  width: 100%;
+  padding-top: clamp(10.5rem, 20vw, 17.5rem);
+  padding-bottom: clamp(3.5rem, 6vw, 5.5rem);
+}
+
+.hero-copy-box {
+  max-width: clamp(340px, 42%, 520px);
+}
+
+.hero-eyebrow {
+  font-family: var(--font-sans);
+  font-size: clamp(0.68rem, 0.95vw, 0.76rem);
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--color-muted-brown);
+  margin-bottom: 1.2rem;
+  display: block;
+}
+
+.hero-headline {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 3.8vw, 3.6rem);
+  font-weight: 400;
+  line-height: 1.16;
+  letter-spacing: 0.03em;
+  color: var(--color-near-black);
+  margin-bottom: 2.4rem;
+}
+
+.hero-headline-desktop {
+  display: block;
+}
+
+.hero-headline-mobile {
+  display: none;
+}
+
