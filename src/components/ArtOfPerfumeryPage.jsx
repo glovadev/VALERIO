@@ -4,7 +4,7 @@ import { siteAssets } from "../data/assets";
 
 export const ArtOfPerfumeryPage = ({ onBackToHome, onSelectFragrance }) => {
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, []);
 
   return (

@@ -1,28 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { siteConfig } from "../data/siteConfig";
 import { siteAssets } from "../data/assets";
 
 export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance }) => {
-  const [currentTab, setCurrentTab] = useState(activeTab);
-
   useEffect(() => {
-    setCurrentTab(activeTab);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [activeTab]);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
 
-  const switchTab = (tabKey) => {
-    setCurrentTab(tabKey);
-    window.location.hash = `#/${tabKey}`;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const tabs = [
-    { key: "about", label: "01. THE JOURNEY" },
-    { key: "the-art", label: "02. THE VALERIOO SIGNATURE" },
-    { key: "philosophy", label: "03. OUR PHILOSOPHY" },
-    { key: "art-of-perfumery", label: "04. THE ART OF PERFUMERY" },
-    { key: "campaign", label: "05. NEW CAMPAIGN" }
-  ];
+  const isCampaign = activeTab === "campaign";
+  const heroImage = isCampaign ? siteAssets.editorial.campaign : siteAssets.editorial.philosophy;
+  const heroEyebrow = isCampaign ? "NEW CAMPAIGN" : "VALERIOO";
+  const heroTitle = isCampaign ? "TIMELESS. YOURS." : "The Art of Signature Scent";
+  const heroAlt = isCampaign ? "Valerioo New Campaign - Timeless. Yours." : "Valerioo The Art of Perfumery";
 
   return (
     <div
@@ -35,7 +24,7 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
         paddingBottom: "6rem"
       }}
     >
-      <div className="container" style={{ maxWidth: "1080px" }}>
+      <div className="container" style={{ maxWidth: "920px" }}>
         
         {/* Top Control Bar: Return to House & Registered Office */}
         <div
@@ -43,8 +32,8 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            marginBottom: "1.5rem",
-            paddingBottom: "1rem",
+            marginBottom: "3rem",
+            paddingBottom: "1.2rem",
             borderBottom: "1px solid var(--color-border)",
             flexWrap: "nowrap",
             gap: "0.5rem"
@@ -59,9 +48,9 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
               cursor: "pointer",
               display: "inline-flex",
               alignItems: "center",
-              gap: "6px",
+              gap: "8px",
               fontFamily: "var(--font-sans)",
-              fontSize: "clamp(0.68rem, 2vw, 0.75rem)",
+              fontSize: "clamp(0.7rem, 2vw, 0.78rem)",
               fontWeight: 600,
               letterSpacing: "0.18em",
               textTransform: "uppercase",
@@ -73,7 +62,7 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
             onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-brass)")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-near-black)")}
           >
-            <span style={{ fontSize: "1rem", lineHeight: 1 }}>←</span>
+            <span style={{ fontSize: "1.1rem", lineHeight: 1 }}>←</span>
             <span>Return to House</span>
           </button>
 
@@ -91,96 +80,54 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
           </span>
         </div>
 
-        {/* Luxury Sub-Navigation Tabs */}
-        <nav
-          className="story-tabs-nav"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "clamp(0.75rem, 2vw, 2rem)",
-            flexWrap: "wrap",
-            padding: "0.8rem 1rem",
-            marginBottom: "clamp(2.5rem, 5vw, 4rem)",
-            backgroundColor: "rgba(228, 217, 206, 0.35)",
-            borderRadius: "2px",
-            border: "1px solid rgba(26, 23, 20, 0.06)"
-          }}
-        >
-          {tabs.map((tab) => {
-            const isActive = currentTab === tab.key;
-            return (
-              <button
-                key={tab.key}
-                onClick={() => switchTab(tab.key)}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  borderBottom: isActive ? "2px solid var(--color-brass)" : "2px solid transparent",
-                  padding: "6px 8px",
-                  cursor: "pointer",
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "clamp(0.65rem, 1.4vw, 0.72rem)",
-                  fontWeight: isActive ? 700 : 500,
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: isActive ? "var(--color-near-black)" : "var(--color-muted-brown)",
-                  transition: "all 0.2s ease"
-                }}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* =========================================================================
-            VIEW 1: ABOUT → THE JOURNEY
-           ========================================================================= */}
-        {currentTab === "about" && (
-          <article className="story-content-view" style={{ maxWidth: "860px", margin: "0 auto" }}>
-            <header style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-              <span
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "0.72rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.3em",
-                  textTransform: "uppercase",
-                  color: "var(--color-brass)",
-                  display: "block",
-                  marginBottom: "0.75rem"
-                }}
-              >
-                About The House
-              </span>
-              <h1
-                style={{
-                  fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(2.4rem, 5.5vw, 4.2rem)",
-                  fontWeight: 400,
-                  lineHeight: 1.1,
-                  letterSpacing: "0.06em",
-                  color: "var(--color-near-black)",
-                  marginBottom: "1rem",
-                  textTransform: "uppercase"
-                }}
-              >
-                THE JOURNEY
-              </h1>
-              <p
-                style={{
-                  fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(1.1rem, 2vw, 1.45rem)",
-                  fontStyle: "italic",
-                  lineHeight: 1.5,
-                  color: "var(--color-brass)",
-                  letterSpacing: "0.04em"
-                }}
-              >
-                From a Dream in Guwahati to a Fragrance with a Vision
-              </p>
-            </header>
+        {/* Unified Editorial Article */}
+        <article style={{ display: "flex", flexDirection: "column", gap: "4.5rem" }}>
+          
+          {/* =========================================================================
+              HEADER & INTRO: THE ART OF SIGNATURE SCENT / NEW CAMPAIGN
+             ========================================================================= */}
+          <header style={{ textAlign: "center" }}>
+            <span
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                letterSpacing: "0.32em",
+                textTransform: "uppercase",
+                color: "var(--color-brass)",
+                display: "block",
+                marginBottom: "0.85rem"
+              }}
+            >
+              {heroEyebrow}
+            </span>
+            <h1
+              style={{
+                fontFamily: "var(--font-serif)",
+                fontSize: "clamp(2.4rem, 5.5vw, 4.2rem)",
+                fontWeight: 400,
+                lineHeight: 1.1,
+                letterSpacing: "0.05em",
+                color: "var(--color-near-black)",
+                marginBottom: "1rem",
+                textTransform: "uppercase"
+              }}
+            >
+              {heroTitle}
+            </h1>
+            <p
+              style={{
+                fontFamily: "var(--font-serif)",
+                fontSize: "clamp(1.15rem, 2.2vw, 1.5rem)",
+                fontStyle: "italic",
+                lineHeight: 1.5,
+                color: "var(--color-brass)",
+                letterSpacing: "0.04em",
+                marginBottom: "2.5rem"
+              }}
+            >
+              A Scent. A Memory. An Identity.
+            </p>
 
             {/* Editorial Visual */}
             <div
@@ -189,67 +136,135 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
                 borderRadius: "2px",
                 overflow: "hidden",
                 boxShadow: "var(--shadow-medium)",
-                marginBottom: "3.5rem",
+                marginBottom: "3rem",
                 backgroundColor: "#2B211A"
               }}
             >
               <img
-                src={siteAssets.editorial.campaign}
-                alt="Valerioo The Journey - From Guwahati to Gujarat"
+                src={heroImage}
+                alt={heroAlt}
                 style={{
                   width: "100%",
-                  height: "clamp(240px, 38vw, 460px)",
+                  height: "clamp(260px, 40vw, 480px)",
                   objectFit: "cover",
-                  objectPosition: "center 25%",
+                  objectPosition: isCampaign ? "center center" : "center 25%",
                   display: "block"
                 }}
               />
             </div>
 
-            {/* Body Copy */}
+            {/* Intro Lead Copy */}
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "1.6rem",
                 fontFamily: "var(--font-sans)",
-                fontSize: "clamp(0.94rem, 1.2vw, 1.05rem)",
+                fontSize: "clamp(0.96rem, 1.25vw, 1.08rem)",
+                lineHeight: 1.85,
+                color: "var(--color-charcoal)",
+                textAlign: "left",
+                maxWidth: "840px",
+                margin: "0 auto"
+              }}
+            >
+              <p style={{ fontWeight: 600, color: "var(--color-near-black)", fontSize: "1.12rem" }}>
+                VALERIOO is a celebration of fragrance, individuality, and timeless elegance.
+              </p>
+              <p>
+                We believe a perfume is more than a beautiful scent. It is an invisible expression of who you are—a feeling captured in a bottle, a memory waiting to be awakened, and a signature that remains long after you have left.
+              </p>
+              <p>
+                Every VALERIOO fragrance is thoughtfully composed to create a distinctive olfactory experience, balancing captivating top notes, an expressive heart, and a sophisticated base. Each creation is designed to evolve with you, revealing different facets of its character while leaving behind a memorable trail.
+              </p>
+              <p>
+                From refined everyday moments to unforgettable evenings, VALERIOO fragrances are created for those who believe their scent should say something about them.
+              </p>
+            </div>
+          </header>
+
+          <hr style={{ border: "none", borderTop: "1px solid var(--color-border)", margin: "0" }} />
+
+          {/* =========================================================================
+              SECTION 1: THE JOURNEY
+             ========================================================================= */}
+          <section>
+            <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+              <span
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "0.72rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.28em",
+                  textTransform: "uppercase",
+                  color: "var(--color-brass)",
+                  display: "block",
+                  marginBottom: "0.6rem"
+                }}
+              >
+                Origins & Vision
+              </span>
+              <h2
+                style={{
+                  fontFamily: "var(--font-serif)",
+                  fontSize: "clamp(2rem, 4.2vw, 3.2rem)",
+                  fontWeight: 400,
+                  letterSpacing: "0.06em",
+                  color: "var(--color-near-black)",
+                  textTransform: "uppercase",
+                  marginBottom: "0.6rem"
+                }}
+              >
+                THE JOURNEY
+              </h2>
+              <p
+                style={{
+                  fontFamily: "var(--font-serif)",
+                  fontSize: "clamp(1.05rem, 1.8vw, 1.3rem)",
+                  fontStyle: "italic",
+                  color: "var(--color-brass)"
+                }}
+              >
+                From a Dream in Guwahati to a Fragrance with a Vision
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "1.5rem",
+                fontFamily: "var(--font-sans)",
+                fontSize: "clamp(0.95rem, 1.2vw, 1.05rem)",
                 lineHeight: 1.85,
                 color: "var(--color-charcoal)"
               }}
             >
-              <p style={{ fontWeight: 600, color: "var(--color-near-black)", fontSize: "1.1rem" }}>
+              <p style={{ fontWeight: 600, color: "var(--color-near-black)", fontSize: "1.08rem" }}>
                 Every remarkable journey begins with a dream.
               </p>
-
               <p>
                 For VALERIOO, that dream began with two friends and a shared vision—to create a fragrance house where scent could connect with emotion, memory, and individuality.
               </p>
-
               <p>
                 In November 2025, their journey took them from Guwahati, Assam, to Gujarat, where they began exploring the world behind the fragrance.
               </p>
-
               <p>
-                They met manufacturers, studied the fragrance industry, explored emerging trends, and discovered the intricate processes behind developing, blending, and producing perfumes.
+                They met manufacturers, studied the fragrance industry, explored emerging trends, and discovered the intricate processes behind developing, blending, and producing perfumes. Their exploration took them across Ahmedabad, Vadodara, and Surat, offering valuable insight into the craftsmanship and possibilities within the fragrance world.
               </p>
-
-              <p>
-                Their exploration took them across Ahmedabad, Vadodara, and Surat, offering valuable insight into the craftsmanship and possibilities within the fragrance world.
-              </p>
-
               <p>
                 With every conversation and every discovery, the vision became clearer.
               </p>
 
-              {/* Purpose Highlight Stanza */}
+              {/* Purpose Box */}
               <div
                 style={{
-                  backgroundColor: "#EAE3D7",
+                  backgroundColor: "#FAF7F2",
                   padding: "clamp(2rem, 3.5vw, 2.8rem)",
                   borderRadius: "2px",
                   borderLeft: "3px solid var(--color-brass)",
-                  margin: "1rem 0"
+                  margin: "1rem 0",
+                  boxShadow: "var(--shadow-subtle)"
                 }}
               >
                 <p
@@ -334,7 +349,7 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
                 <p
                   style={{
                     fontFamily: "var(--font-serif)",
-                    fontSize: "1.3rem",
+                    fontSize: "1.25rem",
                     fontStyle: "italic",
                     color: "var(--color-near-black)",
                     fontWeight: 500,
@@ -345,323 +360,61 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
                 </p>
               </div>
             </div>
-          </article>
-        )}
+          </section>
 
-        {/* =========================================================================
-            VIEW 2: THE ART → THE VALERIOO SIGNATURE
-           ========================================================================= */}
-        {currentTab === "the-art" && (
-          <article className="story-content-view" style={{ maxWidth: "860px", margin: "0 auto" }}>
-            <header style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+          <hr style={{ border: "none", borderTop: "1px solid var(--color-border)", margin: "0" }} />
+
+          {/* =========================================================================
+              SECTION 2: OUR PHILOSOPHY
+             ========================================================================= */}
+          <section>
+            <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
               <span
                 style={{
                   fontFamily: "var(--font-sans)",
                   fontSize: "0.72rem",
                   fontWeight: 600,
-                  letterSpacing: "0.3em",
+                  letterSpacing: "0.28em",
                   textTransform: "uppercase",
                   color: "var(--color-brass)",
                   display: "block",
-                  marginBottom: "0.75rem"
-                }}
-              >
-                Artistic Identity
-              </span>
-              <h1
-                style={{
-                  fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(2.4rem, 5.5vw, 4.2rem)",
-                  fontWeight: 400,
-                  lineHeight: 1.1,
-                  letterSpacing: "0.06em",
-                  color: "var(--color-near-black)",
-                  marginBottom: "1rem",
-                  textTransform: "uppercase"
-                }}
-              >
-                THE VALERIOO SIGNATURE
-              </h1>
-              <p
-                style={{
-                  fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(1.15rem, 2vw, 1.45rem)",
-                  fontStyle: "italic",
-                  lineHeight: 1.5,
-                  color: "var(--color-brass)",
-                  letterSpacing: "0.04em"
-                }}
-              >
-                Contemporary in spirit. Timeless in character.
-              </p>
-            </header>
-
-            {/* Editorial Visual */}
-            <div
-              style={{
-                width: "100%",
-                borderRadius: "2px",
-                overflow: "hidden",
-                boxShadow: "var(--shadow-medium)",
-                marginBottom: "3.5rem",
-                backgroundColor: "#2B211A"
-              }}
-            >
-              <img
-                src={siteAssets.editorial.philosophy}
-                alt="The Valerioo Signature - Contemporary in Spirit. Timeless in Character."
-                style={{
-                  width: "100%",
-                  height: "clamp(240px, 38vw, 460px)",
-                  objectFit: "cover",
-                  objectPosition: "center 25%",
-                  display: "block"
-                }}
-              />
-            </div>
-
-            {/* Body Copy */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "1.8rem",
-                fontFamily: "var(--font-sans)",
-                fontSize: "clamp(0.96rem, 1.25vw, 1.08rem)",
-                lineHeight: 1.85,
-                color: "var(--color-charcoal)",
-                textAlign: "center"
-              }}
-            >
-              <p style={{ maxWidth: "780px", margin: "0 auto" }}>
-                VALERIOO brings together modern aesthetics and the enduring art of perfumery to create fragrances for individuals who embrace their personality and choose to define their own signature.
-              </p>
-
-              <div
-                style={{
-                  padding: "2.5rem 1.5rem",
-                  backgroundColor: "#FAF7F2",
-                  borderRadius: "2px",
-                  border: "1px solid var(--color-border-subtle)",
-                  margin: "1rem auto",
-                  maxWidth: "760px",
-                  width: "100%"
-                }}
-              >
-                <p
-                  style={{
-                    fontFamily: "var(--font-serif)",
-                    fontSize: "clamp(1.2rem, 2vw, 1.55rem)",
-                    fontStyle: "italic",
-                    color: "var(--color-near-black)",
-                    marginBottom: "1.5rem",
-                    lineHeight: 1.6
-                  }}
-                >
-                  “We do not believe there is one fragrance for everyone. <br />
-                  There is only the fragrance that feels like you.”
-                </p>
-
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    flexWrap: "wrap",
-                    gap: "clamp(1rem, 2.5vw, 2.2rem)",
-                    margin: "1.5rem 0"
-                  }}
-                >
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-brass)" }}>
-                    YOUR MOOD
-                  </span>
-                  <span style={{ color: "var(--color-border)" }}>•</span>
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-brass)" }}>
-                    YOUR CHARACTER
-                  </span>
-                  <span style={{ color: "var(--color-border)" }}>•</span>
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-brass)" }}>
-                    YOUR MEMORIES
-                  </span>
-                  <span style={{ color: "var(--color-border)" }}>•</span>
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-brass)" }}>
-                    YOUR STORY
-                  </span>
-                </div>
-              </div>
-
-              <p style={{ maxWidth: "680px", margin: "0 auto", fontSize: "1.1rem" }}>
-                Because your scent should not simply accompany you. <br />
-                <strong style={{ color: "var(--color-near-black)", fontWeight: 700 }}>
-                  It should become part of you.
-                </strong>
-              </p>
-
-              {/* Creed Block */}
-              <div
-                style={{
-                  backgroundColor: "#2B211A",
-                  color: "#FAF8F5",
-                  padding: "clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem)",
-                  borderRadius: "2px",
-                  boxShadow: "var(--shadow-elevated)",
-                  marginTop: "2rem"
-                }}
-              >
-                <h2
-                  style={{
-                    fontFamily: "var(--font-serif)",
-                    fontSize: "clamp(2rem, 4vw, 3.2rem)",
-                    fontWeight: 400,
-                    letterSpacing: "0.15em",
-                    color: "#FFFFFF",
-                    marginBottom: "1.2rem",
-                    textTransform: "uppercase"
-                  }}
-                >
-                  VALERIOO
-                </h2>
-
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.6rem",
-                    fontFamily: "var(--font-serif)",
-                    fontSize: "clamp(1.1rem, 1.8vw, 1.35rem)",
-                    fontStyle: "italic",
-                    color: "#E4D9CE",
-                    marginBottom: "2rem"
-                  }}
-                >
-                  <span>Born from a Dream.</span>
-                  <span>Crafted with a Vision.</span>
-                  <span>Connected to Emotions.</span>
-                </div>
-
-                <div
-                  style={{
-                    width: "48px",
-                    height: "1px",
-                    backgroundColor: "var(--color-brass)",
-                    margin: "0 auto 2rem"
-                  }}
-                />
-
-                <p
-                  style={{
-                    fontFamily: "var(--font-sans)",
-                    fontSize: "0.8rem",
-                    fontWeight: 600,
-                    letterSpacing: "0.26em",
-                    textTransform: "uppercase",
-                    color: "var(--color-brass)",
-                    marginBottom: "1.2rem"
-                  }}
-                >
-                  A SCENT. A MEMORY. AN IDENTITY.
-                </p>
-
-                <p
-                  style={{
-                    fontFamily: "var(--font-serif)",
-                    fontSize: "clamp(1.05rem, 1.6vw, 1.25rem)",
-                    lineHeight: 1.7,
-                    color: "#FAF8F5",
-                    maxWidth: "600px",
-                    margin: "0 auto",
-                    fontStyle: "italic"
-                  }}
-                >
-                  Discover a fragrance that doesn’t simply accompany you— <br />
-                  <strong style={{ color: "#FFFFFF", fontStyle: "normal" }}>
-                    it becomes part of your story.
-                  </strong>
-                </p>
-              </div>
-            </div>
-          </article>
-        )}
-
-        {/* =========================================================================
-            VIEW 3: OUR PHILOSOPHY → WHERE FRAGRANCE BECOMES EMOTION
-           ========================================================================= */}
-        {currentTab === "philosophy" && (
-          <article className="story-content-view" style={{ maxWidth: "860px", margin: "0 auto" }}>
-            <header style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-              <span
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "0.72rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.3em",
-                  textTransform: "uppercase",
-                  color: "var(--color-brass)",
-                  display: "block",
-                  marginBottom: "0.75rem"
+                  marginBottom: "0.6rem"
                 }}
               >
                 Core Belief
               </span>
-              <h1
+              <h2
                 style={{
                   fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(2.4rem, 5.5vw, 4.2rem)",
+                  fontSize: "clamp(2rem, 4.2vw, 3.2rem)",
                   fontWeight: 400,
-                  lineHeight: 1.1,
                   letterSpacing: "0.06em",
                   color: "var(--color-near-black)",
-                  marginBottom: "1rem",
-                  textTransform: "uppercase"
+                  textTransform: "uppercase",
+                  marginBottom: "0.6rem"
                 }}
               >
                 OUR PHILOSOPHY
-              </h1>
+              </h2>
               <p
                 style={{
                   fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(1.15rem, 2vw, 1.45rem)",
+                  fontSize: "clamp(1.05rem, 1.8vw, 1.3rem)",
                   fontStyle: "italic",
-                  lineHeight: 1.5,
-                  color: "var(--color-brass)",
-                  letterSpacing: "0.04em"
+                  color: "var(--color-brass)"
                 }}
               >
                 Where Fragrance Becomes Emotion
               </p>
-            </header>
-
-            {/* Editorial Visual */}
-            <div
-              style={{
-                width: "100%",
-                borderRadius: "2px",
-                overflow: "hidden",
-                boxShadow: "var(--shadow-medium)",
-                marginBottom: "3.5rem",
-                backgroundColor: "#2B211A"
-              }}
-            >
-              <img
-                src={siteAssets.editorial.philosophy}
-                alt="Our Philosophy - Where Fragrance Becomes Emotion"
-                style={{
-                  width: "100%",
-                  height: "clamp(240px, 38vw, 460px)",
-                  objectFit: "cover",
-                  objectPosition: "center 25%",
-                  display: "block"
-                }}
-              />
             </div>
 
-            {/* Body Copy */}
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "1.6rem",
                 fontFamily: "var(--font-sans)",
-                fontSize: "clamp(0.96rem, 1.25vw, 1.08rem)",
+                fontSize: "clamp(0.95rem, 1.2vw, 1.05rem)",
                 lineHeight: 1.85,
                 color: "var(--color-charcoal)"
               }}
@@ -669,12 +422,12 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
               <p
                 style={{
                   fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(1.2rem, 2vw, 1.5rem)",
+                  fontSize: "clamp(1.15rem, 1.8vw, 1.45rem)",
                   fontStyle: "italic",
                   color: "var(--color-near-black)",
                   textAlign: "center",
                   maxWidth: "760px",
-                  margin: "0 auto 1.5rem",
+                  margin: "0 auto 1rem",
                   lineHeight: 1.6
                 }}
               >
@@ -684,23 +437,15 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
               <p>
                 A scent can take you back to a cherished moment, remind you of someone special, awaken confidence, or become inseparably connected to a memory.
               </p>
-
               <p>
                 That invisible connection between fragrance and feeling lies at the heart of VALERIOO.
               </p>
-
               <p>
-                Every fragrance is created to evoke a mood and tell a story.
+                Every fragrance is created to evoke a mood and tell a story. It may be the excitement of a first encounter, the confidence of an important moment, the quiet elegance of an ordinary day, or the warmth of an unforgettable celebration.
               </p>
-
-              <p>
-                It may be the excitement of a first encounter, the confidence of an important moment, the quiet elegance of an ordinary day, or the warmth of an unforgettable celebration.
-              </p>
-
               <p style={{ fontWeight: 700, color: "var(--color-near-black)" }}>
                 Because fragrance is personal.
               </p>
-
               <p>
                 It becomes part of the moments we live, the people we meet, and the memories we carry.
               </p>
@@ -766,43 +511,42 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
                 </p>
               </div>
             </div>
-          </article>
-        )}
+          </section>
 
-        {/* =========================================================================
-            VIEW 4: THE ART OF PERFUMERY → CRAFT & NOTE ARCHITECTURE
-           ========================================================================= */}
-        {currentTab === "art-of-perfumery" && (
-          <article className="story-content-view" style={{ maxWidth: "980px", margin: "0 auto" }}>
-            <header style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+          <hr style={{ border: "none", borderTop: "1px solid var(--color-border)", margin: "0" }} />
+
+          {/* =========================================================================
+              SECTION 3: THE ART OF PERFUMERY & CRAFT
+             ========================================================================= */}
+          <section>
+            <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
               <span
                 style={{
                   fontFamily: "var(--font-sans)",
                   fontSize: "0.72rem",
                   fontWeight: 600,
-                  letterSpacing: "0.3em",
+                  letterSpacing: "0.28em",
                   textTransform: "uppercase",
                   color: "var(--color-brass)",
                   display: "block",
-                  marginBottom: "0.75rem"
+                  marginBottom: "0.6rem"
                 }}
               >
                 Sensory Architecture
               </span>
-              <h1
+              <h2
                 style={{
                   fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(2.4rem, 5.5vw, 4.2rem)",
+                  fontSize: "clamp(2rem, 4.2vw, 3.2rem)",
                   fontWeight: 400,
-                  lineHeight: 1.1,
                   letterSpacing: "0.06em",
                   color: "var(--color-near-black)",
-                  marginBottom: "1.2rem",
-                  textTransform: "uppercase"
+                  textTransform: "uppercase",
+                  marginBottom: "1rem"
                 }}
               >
                 THE ART OF PERFUMERY
-              </h1>
+              </h2>
               <p
                 style={{
                   fontFamily: "var(--font-sans)",
@@ -810,7 +554,7 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
                   lineHeight: 1.8,
                   color: "var(--color-charcoal)",
                   maxWidth: "760px",
-                  margin: "0 auto 1.5rem"
+                  margin: "0 auto 1.2rem"
                 }}
               >
                 A fragrance is an expression of character. It makes an entrance, reveals its personality, evolves over time, and finally leaves behind a signature.
@@ -828,13 +572,13 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
               >
                 “At VALERIOO, perfumery is an art of balance—where aromatic materials, craftsmanship, imagination, and emotion come together to create something deeply personal. Every fragrance is carefully composed to unfold like a story.”
               </p>
-            </header>
+            </div>
 
-            {/* 3 Notes Triad */}
+            {/* 3 Notes Architecture Triad */}
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
                 gap: "1.8rem",
                 marginBottom: "3rem"
               }}
@@ -926,8 +670,8 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
               </strong>
             </div>
 
-            {/* Section: The Craft Behind the Scent */}
-            <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            {/* The Craft Behind The Scent */}
+            <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
               <span
                 style={{
                   fontFamily: "var(--font-sans)",
@@ -937,37 +681,36 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
                   textTransform: "uppercase",
                   color: "var(--color-brass)",
                   display: "block",
-                  marginBottom: "0.75rem"
+                  marginBottom: "0.6rem"
                 }}
               >
                 Master Blending & Creation
               </span>
-              <h2
+              <h3
                 style={{
                   fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)",
+                  fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)",
                   fontWeight: 400,
-                  lineHeight: 1.2,
                   color: "var(--color-near-black)",
                   textTransform: "uppercase"
                 }}
               >
                 THE CRAFT BEHIND THE SCENT
-              </h2>
+              </h3>
             </div>
 
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
                 gap: "1.5rem"
               }}
             >
               {/* Ingredients */}
               <div style={{ backgroundColor: "#EAE3D7", padding: "2.2rem 1.8rem", borderRadius: "2px" }}>
-                <h3 style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-near-black)", marginBottom: "1rem" }}>
+                <h4 style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-near-black)", marginBottom: "0.8rem" }}>
                   INGREDIENTS
-                </h3>
+                </h4>
                 <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", lineHeight: 1.7, color: "var(--color-charcoal)", margin: 0 }}>
                   Every fragrance begins with the selection of aromatic materials. Each ingredient possesses its own personality, intensity, texture, and character.
                 </p>
@@ -975,9 +718,9 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
 
               {/* Composition */}
               <div style={{ backgroundColor: "#EAE3D7", padding: "2.2rem 1.8rem", borderRadius: "2px" }}>
-                <h3 style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-near-black)", marginBottom: "1rem" }}>
+                <h4 style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-near-black)", marginBottom: "0.8rem" }}>
                   COMPOSITION
-                </h3>
+                </h4>
                 <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", lineHeight: 1.7, color: "var(--color-charcoal)", margin: 0 }}>
                   Like music, perfumery is built through harmony and contrast. Individual notes are carefully brought together to create balance, depth, and expression.
                 </p>
@@ -985,9 +728,9 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
 
               {/* Evolution */}
               <div style={{ backgroundColor: "#EAE3D7", padding: "2.2rem 1.8rem", borderRadius: "2px" }}>
-                <h3 style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-near-black)", marginBottom: "1rem" }}>
+                <h4 style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-near-black)", marginBottom: "0.8rem" }}>
                   EVOLUTION
-                </h3>
+                </h4>
                 <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", lineHeight: 1.7, color: "var(--color-charcoal)", margin: 0 }}>
                   A great fragrance is never static. It changes with time, skin, temperature, and environment—revealing new layers as its journey unfolds.
                 </p>
@@ -995,96 +738,70 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
 
               {/* Memory */}
               <div style={{ backgroundColor: "#EAE3D7", padding: "2.2rem 1.8rem", borderRadius: "2px" }}>
-                <h3 style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-near-black)", marginBottom: "1rem" }}>
+                <h4 style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-near-black)", marginBottom: "0.8rem" }}>
                   MEMORY
-                </h3>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", lineHeight: 1.7, color: "var(--color-charcoal)", marginBottom: "0.8rem" }}>
+                </h4>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", lineHeight: 1.7, color: "var(--color-charcoal)", marginBottom: "0.6rem" }}>
                   The most powerful fragrance is the one that becomes connected to a moment.
                 </p>
                 <p style={{ fontFamily: "var(--font-serif)", fontSize: "0.96rem", fontStyle: "italic", lineHeight: 1.6, color: "var(--color-near-black)", margin: 0 }}>
                   A person. A place. A celebration. A feeling.
                 </p>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 600, color: "var(--color-brass)", marginTop: "0.8rem", margin: "0.8rem 0 0" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 600, color: "var(--color-brass)", marginTop: "0.6rem", margin: "0.6rem 0 0" }}>
                   That is when a fragrance becomes more than a fragrance. It becomes a memory.
                 </p>
               </div>
             </div>
-          </article>
-        )}
+          </section>
 
-        {/* =========================================================================
-            VIEW 5: NEW CAMPAIGN → A SCENT. A MEMORY. AN IDENTITY.
-           ========================================================================= */}
-        {currentTab === "campaign" && (
-          <article className="story-content-view" style={{ maxWidth: "860px", margin: "0 auto" }}>
-            <header style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-              <span
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "0.72rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.3em",
-                  textTransform: "uppercase",
-                  color: "var(--color-brass)",
-                  display: "block",
-                  marginBottom: "0.75rem"
-                }}
-              >
-                New Campaign
-              </span>
-              <h1
-                style={{
-                  fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(2.4rem, 5.5vw, 4.2rem)",
-                  fontWeight: 400,
-                  lineHeight: 1.1,
-                  letterSpacing: "0.06em",
-                  color: "var(--color-near-black)",
-                  marginBottom: "1rem",
-                  textTransform: "uppercase"
-                }}
-              >
-                TIMELESS. YOURS.
-              </h1>
-              <p
-                style={{
-                  fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(1.15rem, 2vw, 1.45rem)",
-                  fontStyle: "italic",
-                  lineHeight: 1.5,
-                  color: "var(--color-brass)",
-                  letterSpacing: "0.04em"
-                }}
-              >
-                A Scent. A Memory. An Identity.
-              </p>
-            </header>
+          <hr style={{ border: "none", borderTop: "1px solid var(--color-border)", margin: "0" }} />
 
-            {/* Campaign Visual */}
-            <div
+          {/* =========================================================================
+              SECTION 4: THE VALERIOO SIGNATURE & CREED
+             ========================================================================= */}
+          <section style={{ textAlign: "center" }}>
+            <span
               style={{
-                width: "100%",
-                borderRadius: "2px",
-                overflow: "hidden",
-                boxShadow: "var(--shadow-medium)",
-                marginBottom: "3.5rem",
-                backgroundColor: "#2B211A"
+                fontFamily: "var(--font-sans)",
+                fontSize: "0.72rem",
+                fontWeight: 600,
+                letterSpacing: "0.3em",
+                textTransform: "uppercase",
+                color: "var(--color-brass)",
+                display: "block",
+                marginBottom: "0.6rem"
               }}
             >
-              <img
-                src={siteAssets.editorial.campaign}
-                alt="Valerioo New Campaign - Timeless. Yours."
-                style={{
-                  width: "100%",
-                  height: "clamp(240px, 38vw, 460px)",
-                  objectFit: "cover",
-                  objectPosition: "center top",
-                  display: "block"
-                }}
-              />
-            </div>
+              Artistic Identity
+            </span>
+            <h2
+              style={{
+                fontFamily: "var(--font-serif)",
+                fontSize: "clamp(2rem, 4.2vw, 3.2rem)",
+                fontWeight: 400,
+                lineHeight: 1.1,
+                letterSpacing: "0.06em",
+                color: "var(--color-near-black)",
+                marginBottom: "0.6rem",
+                textTransform: "uppercase"
+              }}
+            >
+              THE VALERIOO SIGNATURE
+            </h2>
+            <p
+              style={{
+                fontFamily: "var(--font-serif)",
+                fontSize: "clamp(1.1rem, 2vw, 1.45rem)",
+                fontStyle: "italic",
+                lineHeight: 1.5,
+                color: "var(--color-brass)",
+                letterSpacing: "0.04em",
+                marginBottom: "2rem"
+              }}
+            >
+              Contemporary in spirit. Timeless in character.
+            </p>
 
-            {/* Campaign Copy */}
             <div
               style={{
                 display: "flex",
@@ -1097,68 +814,155 @@ export const StoryPage = ({ activeTab = "about", onBackToHome, onSelectFragrance
                 textAlign: "center"
               }}
             >
-              <p style={{ fontWeight: 600, color: "var(--color-near-black)", fontSize: "1.15rem", maxWidth: "760px", margin: "0 auto" }}>
-                VALERIOO is a celebration of fragrance, individuality, and timeless elegance.
+              <p style={{ maxWidth: "780px", margin: "0 auto" }}>
+                VALERIOO brings together modern aesthetics and the enduring art of perfumery to create fragrances for individuals who embrace their personality and choose to define their own signature.
               </p>
 
-              <p
-                style={{
-                  fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(1.15rem, 1.8vw, 1.4rem)",
-                  fontStyle: "italic",
-                  lineHeight: 1.6,
-                  color: "var(--color-near-black)",
-                  maxWidth: "760px",
-                  margin: "0 auto"
-                }}
-              >
-                “We believe a perfume is more than a beautiful scent. It is an invisible expression of who you are—a feeling captured in a bottle, a memory waiting to be awakened, and a signature that remains long after you have left.”
-              </p>
-
-              {/* Poetic Stanza */}
               <div
                 style={{
-                  backgroundColor: "#FAF7F2",
                   padding: "2.5rem 1.5rem",
+                  backgroundColor: "#FAF7F2",
                   borderRadius: "2px",
                   border: "1px solid var(--color-border-subtle)",
-                  maxWidth: "600px",
                   margin: "1rem auto",
+                  maxWidth: "760px",
                   width: "100%"
                 }}
               >
-                <ul
+                <p
                   style={{
-                    listStyle: "none",
-                    padding: 0,
-                    margin: 0,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.8rem",
                     fontFamily: "var(--font-serif)",
-                    fontSize: "clamp(1.05rem, 1.5vw, 1.25rem)",
-                    color: "var(--color-near-black)"
+                    fontSize: "clamp(1.2rem, 2vw, 1.55rem)",
+                    fontStyle: "italic",
+                    color: "var(--color-near-black)",
+                    marginBottom: "1.5rem",
+                    lineHeight: 1.6
                   }}
                 >
-                  <li>More than a fragrance.</li>
-                  <li>An expression of who you are.</li>
-                  <li>A feeling captured in a bottle.</li>
-                  <li>A memory waiting to be awakened.</li>
-                  <li>A signature that remains.</li>
-                </ul>
-                <div style={{ marginTop: "1.5rem", paddingTop: "1.2rem", borderTop: "1px solid var(--color-border-subtle)" }}>
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.24em", textTransform: "uppercase", color: "var(--color-brass)" }}>
-                    DISCOVER YOUR SIGNATURE
+                  “We do not believe there is one fragrance for everyone. <br />
+                  There is only the fragrance that feels like you.”
+                </p>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    flexWrap: "wrap",
+                    gap: "clamp(1rem, 2.5vw, 2.2rem)",
+                    margin: "1.5rem 0"
+                  }}
+                >
+                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-brass)" }}>
+                    YOUR MOOD
+                  </span>
+                  <span style={{ color: "var(--color-border)" }}>•</span>
+                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-brass)" }}>
+                    YOUR CHARACTER
+                  </span>
+                  <span style={{ color: "var(--color-border)" }}>•</span>
+                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-brass)" }}>
+                    YOUR MEMORIES
+                  </span>
+                  <span style={{ color: "var(--color-border)" }}>•</span>
+                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-brass)" }}>
+                    YOUR STORY
                   </span>
                 </div>
               </div>
 
-              <p style={{ maxWidth: "740px", margin: "0 auto" }}>
-                From refined everyday moments to unforgettable evenings, VALERIOO fragrances are created for those who believe their scent should say something about them.
+              <p style={{ maxWidth: "680px", margin: "0 auto", fontSize: "1.1rem" }}>
+                Because your scent should not simply accompany you. <br />
+                <strong style={{ color: "var(--color-near-black)", fontWeight: 700 }}>
+                  It should become part of you.
+                </strong>
               </p>
+
+              {/* Creed Block */}
+              <div
+                style={{
+                  backgroundColor: "#2B211A",
+                  color: "#FAF8F5",
+                  padding: "clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem)",
+                  borderRadius: "2px",
+                  boxShadow: "var(--shadow-elevated)",
+                  marginTop: "2rem"
+                }}
+              >
+                <h3
+                  style={{
+                    fontFamily: "var(--font-serif)",
+                    fontSize: "clamp(2rem, 4vw, 3.2rem)",
+                    fontWeight: 400,
+                    letterSpacing: "0.15em",
+                    color: "#FFFFFF",
+                    marginBottom: "1.2rem",
+                    textTransform: "uppercase"
+                  }}
+                >
+                  VALERIOO
+                </h3>
+
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.6rem",
+                    fontFamily: "var(--font-serif)",
+                    fontSize: "clamp(1.1rem, 1.8vw, 1.35rem)",
+                    fontStyle: "italic",
+                    color: "#E4D9CE",
+                    marginBottom: "2rem"
+                  }}
+                >
+                  <span>Born from a Dream.</span>
+                  <span>Crafted with a Vision.</span>
+                  <span>Connected to Emotions.</span>
+                </div>
+
+                <div
+                  style={{
+                    width: "48px",
+                    height: "1px",
+                    backgroundColor: "var(--color-brass)",
+                    margin: "0 auto 2rem"
+                  }}
+                />
+
+                <p
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.26em",
+                    textTransform: "uppercase",
+                    color: "var(--color-brass)",
+                    marginBottom: "1.2rem"
+                  }}
+                >
+                  A SCENT. A MEMORY. AN IDENTITY.
+                </p>
+
+                <p
+                  style={{
+                    fontFamily: "var(--font-serif)",
+                    fontSize: "clamp(1.05rem, 1.6vw, 1.25rem)",
+                    lineHeight: 1.7,
+                    color: "#FAF8F5",
+                    maxWidth: "600px",
+                    margin: "0 auto",
+                    fontStyle: "italic"
+                  }}
+                >
+                  Discover a fragrance that doesn’t simply accompany you— <br />
+                  <strong style={{ color: "#FFFFFF", fontStyle: "normal" }}>
+                    it becomes part of your story.
+                  </strong>
+                </p>
+              </div>
             </div>
-          </article>
-        )}
+          </section>
+
+        </article>
 
         {/* =========================================================================
             BOTTOM ACTIONS (WHATSAPP ORDER & EXPLORE COLLECTION)

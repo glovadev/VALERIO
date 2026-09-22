@@ -5,12 +5,18 @@ import { siteAssets } from "../data/assets";
 export const Hero = () => {
   return (
     <section id="hero" className="hero-section">
-      {/* Layer 1: Full-Row Seamless Panorama Background (Wall, Shadows, Stone Pedestal, Tall Flacon, Flora) */}
-      <img
-        src={siteAssets.hero.background}
-        alt="Valerioo Luxury Extrait de Parfum Bottle on Stone Pedestal with Botanical Flora"
-        className="hero-panorama-bg"
-      />
+      {/* Layer 1: Full-Row Responsive 4K Hero Panorama Background */}
+      <picture className="hero-panorama-picture">
+        <source
+          media="(max-width: 767px)"
+          srcSet={siteAssets.hero.mobileBackground || siteAssets.hero.background}
+        />
+        <img
+          src={siteAssets.hero.background}
+          alt="Valerioo 5 Signature Fragrance Lineup on Travertine Stone Pedestal"
+          className="hero-panorama-bg"
+        />
+      </picture>
 
       {/* Layer 2: Giant Architectural Brand Typography across the top */}
       <div className="hero-giant-watermark">
@@ -21,13 +27,15 @@ export const Hero = () => {
         </div>
       </div>
 
-      {/* Layer 3: Pixel-Perfect Transparent Bottle Cutout Overlapping Typography */}
-      <img
-        src={siteAssets.hero.bottleCutout}
-        alt="Valerioo Luxury Flacon Depth"
-        aria-hidden="true"
-        className="hero-cutout-layer"
-      />
+      {/* Layer 3: Pixel-Perfect Transparent Bottle Cutout Overlapping Typography (if present) */}
+      {siteAssets.hero.bottleCutout ? (
+        <img
+          src={siteAssets.hero.bottleCutout}
+          alt="Valerioo Luxury Flacon Depth"
+          aria-hidden="true"
+          className="hero-cutout-layer"
+        />
+      ) : null}
 
       {/* Layer 4: Editorial Copy Container */}
       <div className="container hero-copy-container">

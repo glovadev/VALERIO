@@ -11,12 +11,17 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--color-cream);
   color: var(--color-near-black);
+}
+
+/* Ensure smooth anchor landing for all sections with sticky header offset */
+section[id], footer[id], header[id], div[id] {
+  scroll-margin-top: calc(var(--header-height, 78px) + 1.25rem);
 }
 
 body {
@@ -388,11 +393,20 @@ img {
 .hero-section {
   position: relative;
   width: 100%;
-  min-height: clamp(560px, 78vh, 820px);
+  min-height: clamp(580px, 82vh, 860px);
   overflow: hidden;
   display: flex;
   align-items: center;
   background-color: var(--color-cream);
+}
+
+.hero-panorama-picture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: block;
 }
 
 .hero-panorama-bg {
@@ -402,13 +416,12 @@ img {
   height: 100%;
   object-fit: cover;
   object-position: center bottom;
-  z-index: 1;
   display: block;
 }
 
 .hero-giant-watermark {
   position: absolute;
-  top: clamp(1.2rem, 4vw, 3.4rem);
+  top: clamp(0.4rem, 1.6vw, 1.6rem);
   left: 0;
   right: 0;
   width: 100%;
@@ -420,11 +433,12 @@ img {
 
 .hero-watermark-text {
   font-family: var(--font-serif);
-  font-size: clamp(4.2rem, 13.2vw, 12.8rem);
+  font-size: clamp(3rem, 9.4vw, 8.6rem);
   font-weight: 400;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-near-black);
+  opacity: 0.88;
   line-height: 0.9;
   display: block;
   width: 100%;
@@ -447,12 +461,12 @@ img {
   position: relative;
   z-index: 4;
   width: 100%;
-  padding-top: clamp(10.5rem, 20vw, 17.5rem);
-  padding-bottom: clamp(3.5rem, 6vw, 5.5rem);
+  padding-top: clamp(8.5rem, 14vw, 13.5rem);
+  padding-bottom: clamp(3rem, 5vw, 4.5rem);
 }
 
 .hero-copy-box {
-  max-width: clamp(340px, 42%, 520px);
+  max-width: clamp(340px, 42%, 460px);
 }
 
 .hero-eyebrow {
@@ -468,12 +482,12 @@ img {
 
 .hero-headline {
   font-family: var(--font-serif);
-  font-size: clamp(2rem, 3.8vw, 3.6rem);
+  font-size: clamp(1.75rem, 3vw, 3rem);
   font-weight: 400;
-  line-height: 1.16;
+  line-height: 1.18;
   letter-spacing: 0.03em;
   color: var(--color-near-black);
-  margin-bottom: 2.4rem;
+  margin-bottom: 2.2rem;
 }
 
 .hero-headline-desktop {

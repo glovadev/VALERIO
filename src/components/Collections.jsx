@@ -92,12 +92,13 @@ export const Collections = ({ onSelectCategory }) => {
                 collection={col}
                 onClick={() => {
                   if (col.id === "bestsellers") {
+                    if (onSelectCategory) onSelectCategory(null);
                     const el = document.getElementById("bestsellers");
-                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                    if (el) el.scrollIntoView({ behavior: "instant" });
                   } else if (onSelectCategory) {
                     onSelectCategory(col.title);
                     const el = document.getElementById("bestsellers");
-                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                    if (el) el.scrollIntoView({ behavior: "instant" });
                   }
                 }}
               />

@@ -28,7 +28,6 @@ export const footerLinks = {
   customer: [
     { label: "WhatsApp Concierge", href: "#contact" },
     { label: "Shipping & Delivery", href: "#features" },
-    { label: "Guwahati Atelier", href: "#contact" },
     { label: "Direct Inquiries", href: "#contact" }
   ]
 };

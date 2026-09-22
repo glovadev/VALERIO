@@ -188,20 +188,9 @@ export const Footer = () => {
             </h5>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", fontSize: "0.78rem", color: "var(--color-muted-brown)" }}>
               <div>
-                <span style={{ color: "var(--color-near-black)", display: "block", fontWeight: 500, marginBottom: "2px" }}>Atelier Address:</span>
-                <p style={{ margin: 0, lineHeight: 1.45, fontSize: "0.76rem" }}>
-                  {siteConfig.contact.address.line1},
-                  <br />
-                  {siteConfig.contact.address.line2},
-                  <br />
-                  {siteConfig.contact.address.city} – {siteConfig.contact.address.pincode}, {siteConfig.contact.address.state}
-                </p>
-              </div>
-
-              <div>
                 <a
                   href={`tel:${siteConfig.contact.phone}`}
-                  style={{ color: "var(--color-near-black)", display: "block", fontWeight: 500 }}
+                  style={{ color: "var(--color-near-black)", display: "block", fontWeight: 500, marginBottom: "4px" }}
                 >
                   {siteConfig.contact.phone}
                 </a>
@@ -212,10 +201,6 @@ export const Footer = () => {
                   {siteConfig.contact.email}
                 </a>
               </div>
-
-              <span style={{ fontSize: "0.72rem", color: "var(--color-brass)" }}>
-                {siteConfig.contact.hours}
-              </span>
             </div>
           </div>
         </div>

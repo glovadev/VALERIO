@@ -17,8 +17,9 @@ export const siteAssets = {
 
   // Hero Section
   hero: {
-    background: "/assets/hero/hero-full-row.jpg",
-    bottleCutout: "/assets/hero/hero-bottle-cutout-panoramic.png"
+    background: "/assets/hero/hero-5-bottles-4k.jpg",
+    mobileBackground: "/assets/hero/hero-5-bottles-mobile-4k.jpg",
+    bottleCutout: ""
   },
 
   // Collections Cards ("Explore the World of Valerioo")
@@ -29,12 +30,14 @@ export const siteAssets = {
     bestsellers: "/assets/collections/bestsellers.jpg"
   },
 
-  // Bestsellers Packshots (4 Signature Products)
+  // Bestsellers & Signature Packshots
   products: {
-    noirIntense: "/assets/products/noir-intense.jpg",
-    oudRoyale: "/assets/products/oud-royale.jpg",
-    blueAllure: "/assets/products/blue-allure.jpg",
-    amberNoir: "/assets/products/amber-noir.jpg"
+    viaan: "/assets/products/viaan.jpg",
+    sapphire: "/assets/products/sapphire.jpg",
+    helius: "/assets/products/helius.jpg",
+    zinnia: "/assets/products/zinnia.jpg",
+    herr: "/assets/products/herr.jpg",
+    egan: "/assets/products/egan.jpg"
   },
 
   // Editorial Story Banners

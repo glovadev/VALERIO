@@ -1,20 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
 import { sendProductInquiry } from "../utils/whatsapp";
 
-export const ProductModal = ({ product, onClose }) => {
+export const ProductModal = ({ product, initialVariant, onClose }) => {
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariant, setSelectedVariant] = useState(null);
   const { addToCart } = useCart();
+
+  useEffect(() => {
+    if (product?.variants) {
+      setSelectedVariant(initialVariant || product.variants[1] || product.variants[0]);
+    } else {
+      setSelectedVariant(null);
+    }
+    setQuantity(1);
+  }, [product, initialVariant]);
 
   if (!product) return null;
 
+  const currentPrice = selectedVariant ? selectedVariant.price : product.price;
+  const currentMrp = selectedVariant ? selectedVariant.mrp : product.mrp;
+  const currentSize = selectedVariant ? selectedVariant.size : product.volume;
+  const currentBadge = selectedVariant?.badge;
+
   const handleAddToCart = () => {
-    addToCart(product, quantity);
+    addToCart(product, quantity, selectedVariant);
     onClose();
   };
 
   const handleWhatsAppOrder = () => {
-    sendProductInquiry(product, quantity);
+    sendProductInquiry(product, quantity, selectedVariant);
   };
 
   return (
@@ -74,20 +89,41 @@ export const ProductModal = ({ product, onClose }) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: "3rem 2rem",
-            position: "relative"
+            padding: "1.5rem 1rem",
+            position: "relative",
+            minHeight: "420px"
           }}
         >
           <img
             src={product.image}
             alt={product.name}
             style={{
-              width: "85%",
+              width: "100%",
               height: "auto",
-              maxHeight: "360px",
+              maxHeight: "480px",
               objectFit: "contain"
             }}
           />
+
+          {currentBadge && (
+            <span
+              style={{
+                position: "absolute",
+                top: "1.2rem",
+                left: "1.2rem",
+                backgroundColor: "var(--color-brass)",
+                color: "#FFFFFF",
+                fontSize: "0.62rem",
+                fontWeight: 600,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                padding: "4px 10px",
+                borderRadius: "1px"
+              }}
+            >
+              {currentBadge}
+            </span>
+          )}
         </div>
 
         {/* Right: Product Details & Purchase Actions */}
@@ -105,7 +141,7 @@ export const ProductModal = ({ product, onClose }) => {
                 {product.category} COLLECTION
               </span>
               <span style={{ fontSize: "0.72rem", color: "var(--color-muted-brown)", letterSpacing: "0.1em" }}>
-                {product.volume}
+                {currentSize}
               </span>
             </div>
 
@@ -130,31 +166,123 @@ export const ProductModal = ({ product, onClose }) => {
                 textTransform: "uppercase",
                 color: "var(--color-brass)",
                 fontWeight: 600,
-                marginBottom: "1.2rem"
+                marginBottom: "1rem"
               }}
             >
               {product.subtitle} · {product.concentration}
             </p>
 
-            <span
-              style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: "1.4rem",
-                fontWeight: 600,
-                color: "var(--color-near-black)",
-                display: "block",
-                marginBottom: "1.4rem"
-              }}
-            >
-              ₹{product.price.toLocaleString("en-IN")}
-            </span>
+            {/* Size Variants Category Selector */}
+            {product.variants && (
+              <div style={{ marginBottom: "1.2rem" }}>
+                <span
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "0.66rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    display: "block",
+                    color: "var(--color-muted-brown)",
+                    marginBottom: "0.45rem"
+                  }}
+                >
+                  Select Size & Category:
+                </span>
+                <div style={{ display: "flex", gap: "0.6rem" }}>
+                  {product.variants.map((v) => {
+                    const isSelected = selectedVariant?.size === v.size;
+                    return (
+                      <button
+                        key={v.size}
+                        onClick={() => setSelectedVariant(v)}
+                        style={{
+                          flex: 1,
+                          padding: "0.6rem 0.8rem",
+                          border: isSelected
+                            ? "1.5px solid var(--color-near-black)"
+                            : "1px solid var(--color-border-dark)",
+                          backgroundColor: isSelected ? "#FAF8F5" : "#FFFFFF",
+                          borderRadius: "1px",
+                          cursor: "pointer",
+                          textAlign: "left",
+                          transition: "all 0.2s ease"
+                        }}
+                      >
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2px" }}>
+                          <span style={{ fontSize: "0.8rem", fontWeight: isSelected ? 700 : 500, color: "var(--color-near-black)" }}>
+                            {v.size}
+                          </span>
+                          {v.badge && (
+                            <span style={{ fontSize: "0.58rem", color: "var(--color-brass)", fontWeight: 700, textTransform: "uppercase" }}>
+                              {v.badge}
+                            </span>
+                          )}
+                        </div>
+                        <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
+                          <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "var(--color-near-black)" }}>
+                            ₹{v.price.toLocaleString("en-IN")}
+                          </span>
+                          {v.mrp && v.mrp > v.price && (
+                            <span style={{ fontSize: "0.7rem", color: "var(--color-muted-brown)", textDecoration: "line-through" }}>
+                              MRP ₹{v.mrp.toLocaleString("en-IN")}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Price Row */}
+            <div style={{ display: "flex", alignItems: "baseline", gap: "10px", marginBottom: "1.2rem" }}>
+              <span
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "1.45rem",
+                  fontWeight: 600,
+                  color: "var(--color-near-black)",
+                  display: "block"
+                }}
+              >
+                ₹{currentPrice.toLocaleString("en-IN")}
+              </span>
+
+              {currentMrp && currentMrp > currentPrice && (
+                <>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-sans)",
+                      fontSize: "0.92rem",
+                      color: "var(--color-muted-brown)",
+                      textDecoration: "line-through"
+                    }}
+                  >
+                    MRP ₹{currentMrp.toLocaleString("en-IN")}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "0.72rem",
+                      fontWeight: 600,
+                      color: "var(--color-brass)",
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase"
+                    }}
+                  >
+                    (Save ₹{(currentMrp - currentPrice).toLocaleString("en-IN")})
+                  </span>
+                </>
+              )}
+            </div>
 
             <p
               style={{
                 fontSize: "0.86rem",
                 color: "var(--color-muted-brown)",
                 lineHeight: 1.65,
-                marginBottom: "1.6rem"
+                marginBottom: "1.4rem"
               }}
             >
               {product.description}
@@ -167,7 +295,7 @@ export const ProductModal = ({ product, onClose }) => {
                   padding: "1rem 1.2rem",
                   backgroundColor: "rgba(229, 214, 194, 0.4)",
                   borderRadius: "1px",
-                  marginBottom: "1.8rem"
+                  marginBottom: "1.2rem"
                 }}
               >
                 <span
@@ -186,18 +314,58 @@ export const ProductModal = ({ product, onClose }) => {
                 </span>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", fontSize: "0.75rem" }}>
                   <div>
-                    <strong style={{ color: "var(--color-near-black)", fontWeight: 500 }}>Top: </strong>
-                    <span style={{ color: "var(--color-muted-brown)" }}>{product.notes.top.join(", ")}</span>
+                    <strong style={{ color: "var(--color-near-black)", fontWeight: 500 }}>Top Notes: </strong>
+                    <span style={{ color: "var(--color-muted-brown)" }}>{product.notes.top.join(" · ")}</span>
                   </div>
                   <div>
-                    <strong style={{ color: "var(--color-near-black)", fontWeight: 500 }}>Heart: </strong>
-                    <span style={{ color: "var(--color-muted-brown)" }}>{product.notes.heart.join(", ")}</span>
+                    <strong style={{ color: "var(--color-near-black)", fontWeight: 500 }}>Heart Notes: </strong>
+                    <span style={{ color: "var(--color-muted-brown)" }}>{product.notes.heart.join(" · ")}</span>
                   </div>
                   <div>
-                    <strong style={{ color: "var(--color-near-black)", fontWeight: 500 }}>Base: </strong>
-                    <span style={{ color: "var(--color-muted-brown)" }}>{product.notes.base.join(", ")}</span>
+                    <strong style={{ color: "var(--color-near-black)", fontWeight: 500 }}>Base Notes: </strong>
+                    <span style={{ color: "var(--color-muted-brown)" }}>{product.notes.base.join(" · ")}</span>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* Brand Story & Gratitude Section */}
+            {product.story && (
+              <div
+                style={{
+                  padding: "1rem 1.2rem",
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid rgba(229, 214, 194, 0.6)",
+                  borderRadius: "1px",
+                  marginBottom: "1.6rem"
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "var(--font-serif)",
+                    fontSize: "0.72rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    display: "block",
+                    color: "var(--color-brass)",
+                    marginBottom: "0.5rem"
+                  }}
+                >
+                  The Emotion & Gratitude
+                </span>
+                <p
+                  style={{
+                    fontSize: "0.76rem",
+                    color: "var(--color-near-black)",
+                    lineHeight: 1.6,
+                    whiteSpace: "pre-line",
+                    margin: 0,
+                    fontStyle: "italic"
+                  }}
+                >
+                  {product.story}
+                </p>
               </div>
             )}
           </div>

@@ -60,7 +60,7 @@ export const PhilosophyBanner = ({ onOpenPhilosophyModal }) => {
                 lineHeight: 1.14,
                 letterSpacing: "0.03em",
                 color: "var(--color-near-black)",
-                marginBottom: "1.5rem"
+                marginBottom: "1.2rem"
               }}
             >
               THE ART
@@ -68,7 +68,7 @@ export const PhilosophyBanner = ({ onOpenPhilosophyModal }) => {
               OF PERFUMERY
             </h2>
 
-            <div style={{ marginBottom: "2.2rem" }}>
+            <div style={{ marginBottom: "2rem" }}>
               <p
                 style={{
                   fontFamily: "var(--font-sans)",
@@ -78,7 +78,7 @@ export const PhilosophyBanner = ({ onOpenPhilosophyModal }) => {
                   textTransform: "uppercase",
                   color: "var(--color-near-black)",
                   lineHeight: 1.7,
-                  marginBottom: "0.25rem"
+                  marginBottom: "0.5rem"
                 }}
               >
                 A SCENT. A MEMORY. AN IDENTITY.
@@ -92,12 +92,12 @@ export const PhilosophyBanner = ({ onOpenPhilosophyModal }) => {
                   lineHeight: 1.6
                 }}
               >
-                Where fragrance becomes emotion.
+                VALERIOO is a celebration of fragrance, individuality, and timeless elegance.
               </p>
             </div>
 
             <a
-              href="#/philosophy"
+              href="#/the-art"
               className="editorial-link"
               onClick={(e) => {
                 if (onOpenPhilosophyModal) {
@@ -111,7 +111,7 @@ export const PhilosophyBanner = ({ onOpenPhilosophyModal }) => {
                 borderBottomWidth: "1.5px"
               }}
             >
-              <span>OUR PHILOSOPHY</span>
+              <span>EXPLORE THE ART</span>
               <span className="arrow">→</span>
             </a>
           </div>

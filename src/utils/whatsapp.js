@@ -20,17 +20,22 @@ export const createWhatsAppLink = (message, phoneNumber = siteConfig.whatsapp.nu
 /**
  * Formats a single product inquiry/order message
  */
-export const formatProductMessage = (product, quantity = 1) => {
-  const formattedPrice = `₹${(product.price || 0).toLocaleString("en-IN")}`;
+export const formatProductMessage = (product, quantity = 1, selectedVariant = null) => {
+  const size = selectedVariant?.size || product.volume || "Standard";
+  const price = selectedVariant?.price || product.price || 0;
+  const formattedPrice = `₹${price.toLocaleString("en-IN")}`;
+  const mrpText = selectedVariant?.mrp && selectedVariant.mrp > price ? ` (MRP: ₹${selectedVariant.mrp.toLocaleString("en-IN")})` : "";
+  const offerText = selectedVariant?.badge ? ` [${selectedVariant.badge}]` : "";
 
   return `Hello VALERIOO,
 
-I am interested in:
+I am interested in ordering:
 
 Product: ${product.name}
-Type: ${product.subtitle || "EXTRAIT DE PARFUM"}
-Price: ${formattedPrice}
+Size: ${size}${offerText}
+Price: ${formattedPrice}${mrpText}
 Quantity: ${quantity}
+Category: ${product.category} Collection
 
 Please share availability and delivery details.
 
@@ -40,8 +45,8 @@ Thank you.`;
 /**
  * Triggers WhatsApp direct link for a single product inquiry
  */
-export const sendProductInquiry = (product, quantity = 1) => {
-  const message = formatProductMessage(product, quantity);
+export const sendProductInquiry = (product, quantity = 1, selectedVariant = null) => {
+  const message = formatProductMessage(product, quantity, selectedVariant);
   const link = createWhatsAppLink(message);
   window.open(link, "_blank", "noopener,noreferrer");
 };

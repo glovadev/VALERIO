@@ -94,22 +94,23 @@
 
   /* Hero on Tablets */
   .hero-section {
-    min-height: 600px !important;
-    height: 75vh !important;
+    min-height: 580px !important;
+    height: 76vh !important;
   }
 
   .hero-panorama-bg,
   .hero-cutout-layer {
-    object-position: 62% bottom !important;
+    object-position: 78% bottom !important;
   }
 
   .hero-watermark-text {
-    font-size: clamp(3.2rem, 10vw, 5.5rem) !important;
-    letter-spacing: 0.12em !important;
+    font-size: clamp(3rem, 8.5vw, 5.2rem) !important;
+    letter-spacing: 0.14em !important;
   }
 
   .hero-copy-container {
-    padding-top: 7rem !important;
+    padding-top: 5rem !important;
+    padding-bottom: 2rem !important;
   }
 
   .hero-copy-box {
@@ -185,13 +186,13 @@
 
   /* ==============================================
      HERO SECTION - MOBILE OPTIMIZED
-     Bottle is horizontally centered at 63.5%
-     Copy is elegantly centered above the bottle
+     All 5 bottles centered and fully visible
+     Clean headroom with subtle luxury watermark
      ============================================== */
   .hero-section {
-    min-height: 620px !important;
-    height: 88vh !important;
-    max-height: 760px !important;
+    min-height: 560px !important;
+    height: 82vh !important;
+    max-height: 720px !important;
     align-items: flex-start !important;
     padding-top: 0 !important;
   }
@@ -199,22 +200,23 @@
   .hero-panorama-bg,
   .hero-cutout-layer {
     object-fit: cover !important;
-    object-position: 63.5% bottom !important;
+    object-position: center bottom !important;
   }
 
   .hero-giant-watermark {
-    top: 0.5rem !important;
+    top: 0.2rem !important;
     padding: 0 0.5rem !important;
   }
 
   .hero-watermark-text {
-    font-size: clamp(2rem, 10.5vw, 3.2rem) !important;
-    letter-spacing: 0.10em !important;
+    font-size: clamp(2rem, 9.2vw, 3.2rem) !important;
+    letter-spacing: 0.14em !important;
+    color: rgba(26, 23, 20, 0.05) !important;
     line-height: 1 !important;
   }
 
   .hero-copy-container {
-    padding-top: 2.8rem !important;
+    padding-top: 3.2rem !important;
     padding-bottom: 1rem !important;
     display: flex !important;
     justify-content: center !important;
@@ -231,16 +233,16 @@
 
   .hero-eyebrow {
     font-size: 0.58rem !important;
-    letter-spacing: 0.24em !important;
-    margin-bottom: 0.25rem !important;
+    letter-spacing: 0.26em !important;
+    margin-bottom: 0.35rem !important;
     color: var(--color-muted-brown) !important;
   }
 
   .hero-headline {
-    font-size: clamp(1.18rem, 4.8vw, 1.45rem) !important;
-    line-height: 1.22 !important;
-    letter-spacing: 0.03em !important;
-    margin-bottom: 0.6rem !important;
+    font-size: clamp(1.2rem, 5vw, 1.5rem) !important;
+    line-height: 1.25 !important;
+    letter-spacing: 0.04em !important;
+    margin-bottom: 0.75rem !important;
     color: var(--color-near-black) !important;
   }
 
@@ -258,8 +260,8 @@
   }
 
   .hero-cta-wrap a {
-    font-size: 0.66rem !important;
-    letter-spacing: 0.18em !important;
+    font-size: 0.68rem !important;
+    letter-spacing: 0.20em !important;
   }
 
   /* ==============================================

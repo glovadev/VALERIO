@@ -44,37 +44,125 @@ const getStoryStateFromHash = (hash) => {
 const MainContent = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProductData, setSelectedProductData] = useState({ product: null, variant: null });
   const [activeCategory, setActiveCategory] = useState(null);
   const [editorialModal, setEditorialModal] = useState({ isOpen: false, type: "campaign" });
 
   const [storyState, setStoryState] = useState(() => getStoryStateFromHash(window.location.hash));
 
+  const scrollToSection = (targetId) => {
+    if (!targetId || targetId === "top" || targetId === "#") {
+      window.scrollTo({ top: 0, behavior: "instant" });
+      return;
+    }
+
+    const performScroll = (retries = 0) => {
+      const el = document.getElementById(targetId);
+      if (el) {
+        const headerOffset = window.innerWidth <= 768 ? 70 : 80;
+        const elPosition = el.getBoundingClientRect().top;
+        const offsetPosition = elPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+          top: Math.max(0, offsetPosition),
+          behavior: "instant"
+        });
+      } else if (retries < 15) {
+        setTimeout(() => performScroll(retries + 1), 40);
+      }
+    };
+
+    performScroll();
+  };
+
   useEffect(() => {
     const handleHashChange = () => {
-      const state = getStoryStateFromHash(window.location.hash);
-      setStoryState(state);
-      if (state.isStory) {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+      const rawHash = window.location.hash || "";
+      const story = getStoryStateFromHash(rawHash);
+      
+      setStoryState(story);
+
+      if (story.isStory) {
+        window.scrollTo({ top: 0, behavior: "instant" });
+      } else {
+        const cleanTarget = rawHash.replace(/^#\/?/, "").toLowerCase();
+        if (cleanTarget && cleanTarget !== "top" && cleanTarget !== "") {
+          const [sectionId, query] = cleanTarget.split("?");
+          if (query && query.includes("category=")) {
+            const cat = query.split("category=")[1].toUpperCase();
+            setActiveCategory(cat);
+          }
+          scrollToSection(sectionId);
+        }
+      }
+    };
+
+    const handleAnchorClick = (e) => {
+      const anchor = e.target.closest("a");
+      if (!anchor) return;
+      
+      const href = anchor.getAttribute("href") || "";
+      // If it's a section anchor on the landing page (#bestsellers, #collections, #contact, etc.)
+      if (href.startsWith("#") && !href.startsWith("#/")) {
+        const cleanTarget = href.replace(/^#/, "").toLowerCase();
+        if (!cleanTarget || cleanTarget === "" || cleanTarget === "top") {
+          e.preventDefault();
+          if (storyState.isStory) {
+            setStoryState({ isStory: false, tab: "about" });
+            window.location.hash = "";
+          }
+          window.scrollTo({ top: 0, behavior: "instant" });
+        } else {
+          e.preventDefault();
+          const [sectionId, query] = cleanTarget.split("?");
+          if (query && query.includes("category=")) {
+            const cat = query.split("category=")[1].toUpperCase();
+            setActiveCategory(cat);
+          }
+          
+          if (storyState.isStory) {
+            setStoryState({ isStory: false, tab: "about" });
+            window.location.hash = href;
+          } else {
+            history.pushState(null, "", href);
+          }
+          scrollToSection(sectionId);
+        }
       }
     };
 
     window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
+    document.addEventListener("click", handleAnchorClick);
+
+    // Initial load check
+    if (window.location.hash) {
+      handleHashChange();
+    }
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+      document.removeEventListener("click", handleAnchorClick);
+    };
+  }, [storyState.isStory]);
 
   const { notification } = useCart();
 
   const handleOpenPhilosophy = () => {
     window.location.hash = "#/philosophy";
     setStoryState({ isStory: true, tab: "philosophy" });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
+  const handleOpenCampaign = () => {
+    window.location.hash = "#/campaign";
+    setStoryState({ isStory: true, tab: "campaign" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   const handleBackToHome = () => {
     window.location.hash = "";
     setStoryState({ isStory: false, tab: "about" });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   const handleOpenStory = () => {
@@ -127,11 +215,9 @@ const MainContent = () => {
           activeTab={storyState.tab}
           onBackToHome={handleBackToHome}
           onSelectFragrance={() => {
-            handleBackToHome();
-            setTimeout(() => {
-              const el = document.getElementById("bestsellers");
-              if (el) el.scrollIntoView({ behavior: "smooth" });
-            }, 100);
+            setStoryState({ isStory: false, tab: "about" });
+            window.location.hash = "#bestsellers";
+            scrollToSection("bestsellers");
           }}
         />
       ) : (
@@ -150,11 +236,11 @@ const MainContent = () => {
           <Bestsellers
             activeCategory={activeCategory}
             onSelectCategory={handleSelectCategory}
-            onQuickView={(prod) => setSelectedProduct(prod)}
+            onQuickView={(prod, variant) => setSelectedProductData({ product: prod, variant })}
           />
 
           {/* 6. Timeless Yours Campaign Banner */}
-          <CampaignBanner onOpenStoryModal={handleOpenStory} />
+          <CampaignBanner onOpenStoryModal={handleOpenCampaign} />
 
           {/* 7. Features & Trust Bar */}
           <FeatureBar />
@@ -174,7 +260,7 @@ const MainContent = () => {
       <SearchOverlay
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
-        onSelectProduct={(prod) => setSelectedProduct(prod)}
+        onSelectProduct={(prod) => setSelectedProductData({ product: prod, variant: null })}
       />
 
       {/* Mobile Slide-out Menu */}
@@ -186,8 +272,9 @@ const MainContent = () => {
 
       {/* Product Quick View / Detail Modal */}
       <ProductModal
-        product={selectedProduct}
-        onClose={() => setSelectedProduct(null)}
+        product={selectedProductData.product}
+        initialVariant={selectedProductData.variant}
+        onClose={() => setSelectedProductData({ product: null, variant: null })}
       />
 
       {/* Editorial Modal (Campaign Story) */}
