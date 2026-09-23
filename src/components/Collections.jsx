@@ -63,7 +63,14 @@ export const Collections = ({ onSelectCategory }) => {
               <a
                 href="#bestsellers"
                 className="editorial-link"
-                onClick={() => onSelectCategory && onSelectCategory("ALL")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (onSelectCategory) onSelectCategory("ALL");
+                  history.pushState(null, "", "#bestsellers");
+                  const el = document.getElementById("bestsellers");
+                  if (el) el.scrollIntoView({ behavior: "instant" });
+                }}
                 style={{
                   fontSize: "0.74rem",
                   letterSpacing: "0.2em",

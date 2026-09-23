@@ -4,7 +4,9 @@ import { ProductCard } from "./ProductCard";
 
 export const Bestsellers = ({ activeCategory, onSelectCategory, onQuickView }) => {
   const displayedProducts =
-    activeCategory && activeCategory !== "ALL"
+    activeCategory === "ALL"
+      ? products
+      : activeCategory
       ? products.filter((p) => p.category.toLowerCase() === activeCategory.toLowerCase())
       : getBestsellers();
 
@@ -48,7 +50,7 @@ export const Bestsellers = ({ activeCategory, onSelectCategory, onQuickView }) =
                 margin: 0
               }}
             >
-              {activeCategory && activeCategory !== "ALL" ? `${activeCategory} COLLECTION` : "BESTSELLERS"}
+              {activeCategory === "ALL" ? "ALL COLLECTIONS" : activeCategory && activeCategory !== "ALL" ? `${activeCategory} COLLECTION` : "BESTSELLERS"}
             </h2>
           </div>
 
@@ -87,7 +89,7 @@ export const Bestsellers = ({ activeCategory, onSelectCategory, onQuickView }) =
                 borderBottom: "none"
               }}
             >
-              <span>{activeCategory === "ALL" ? "SHOW BESTSELLERS" : "VIEW ALL"}</span>
+              <span>{activeCategory === "ALL" ? "SHOW BESTSELLERS" : activeCategory ? "VIEW ALL" : "VIEW ALL"}</span>
               <span className="arrow" style={{ marginLeft: "6px" }}>→</span>
             </a>
           </div>

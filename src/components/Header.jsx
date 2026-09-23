@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { siteConfig } from "../data/siteConfig";
 
-export const Header = ({ onOpenSearch, onOpenMobileMenu }) => {
+export const Header = ({ onOpenSearch, onOpenMobileMenu, onBestsellerNav }) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export const Header = ({ onOpenSearch, onOpenMobileMenu }) => {
           <a href="#collections" className="header-nav-link">
             COLLECTIONS
           </a>
-          <a href="#bestsellers" className="header-nav-link">
+          <a href="#bestsellers" className="header-nav-link" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onBestsellerNav && onBestsellerNav(); }}>
             BESTSELLERS
           </a>
           <a href="#/the-art" className="header-nav-link">

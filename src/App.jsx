@@ -207,6 +207,7 @@ const MainContent = () => {
       <Header
         onOpenSearch={() => setIsSearchOpen(true)}
         onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
+        onBestsellerNav={() => { handleSelectCategory(null); scrollToSection("bestsellers"); }}
       />
 
       {storyState.isStory ? (

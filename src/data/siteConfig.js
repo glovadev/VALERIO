@@ -13,14 +13,14 @@ export const siteConfig = {
   heroCta: "DISCOVER THE COLLECTION",
 
   whatsapp: {
-    number: "919876543210", // Primary business WhatsApp number
-    displayNumber: "+91 98765 43210",
+    number: "919859930710", // Primary business WhatsApp number
+    displayNumber: "+91 98599 30710",
     defaultMessage: "Hello VALERIOO, I would like to know more about your fragrances."
   },
 
   contact: {
-    phone: "+91 98765 43210",
-    email: "support@valerioo.com",
+    phone: "+91 9859930710",
+    email: "valeriooind@gmail.com",
     hours: "Mon - Sat: 10AM - 7PM",
     address: {
       line1: "House No 47, Hengrabari Road",
@@ -32,10 +32,10 @@ export const siteConfig = {
   },
 
   social: {
-    instagram: "https://instagram.com",
-    facebook: "https://facebook.com",
-    youtube: "https://youtube.com",
-    pinterest: "https://pinterest.com"
+    instagram: "",
+    facebook: "",
+    youtube: "",
+    pinterest: ""
   },
 
   newsletter: {

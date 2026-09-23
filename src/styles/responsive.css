@@ -190,9 +190,9 @@
      Clean headroom with subtle luxury watermark
      ============================================== */
   .hero-section {
-    min-height: 560px !important;
-    height: 82vh !important;
-    max-height: 720px !important;
+    min-height: 440px !important;
+    height: 62vh !important;
+    max-height: 520px !important;
     align-items: flex-start !important;
     padding-top: 0 !important;
   }
@@ -204,26 +204,26 @@
   }
 
   .hero-giant-watermark {
-    top: 0.2rem !important;
+    top: 0.5rem !important;
     padding: 0 0.5rem !important;
   }
 
   .hero-watermark-text {
-    font-size: clamp(2rem, 9.2vw, 3.2rem) !important;
-    letter-spacing: 0.14em !important;
-    color: rgba(26, 23, 20, 0.05) !important;
+    font-size: clamp(2.3rem, 10vw, 3.4rem) !important;
+    letter-spacing: 0.16em !important;
+    color: rgba(26, 23, 20, 0.06) !important;
     line-height: 1 !important;
   }
 
   .hero-copy-container {
-    padding-top: 3.2rem !important;
-    padding-bottom: 1rem !important;
+    padding-top: 1.6rem !important;
+    padding-bottom: 0.4rem !important;
     display: flex !important;
     justify-content: center !important;
   }
 
   .hero-copy-box {
-    max-width: 320px !important;
+    max-width: 330px !important;
     text-align: center !important;
     background: transparent !important;
     backdrop-filter: none !important;
@@ -232,17 +232,17 @@
   }
 
   .hero-eyebrow {
-    font-size: 0.58rem !important;
-    letter-spacing: 0.26em !important;
-    margin-bottom: 0.35rem !important;
+    font-size: 0.60rem !important;
+    letter-spacing: 0.28em !important;
+    margin-bottom: 0.4rem !important;
     color: var(--color-muted-brown) !important;
   }
 
   .hero-headline {
-    font-size: clamp(1.2rem, 5vw, 1.5rem) !important;
+    font-size: clamp(1.3rem, 5.2vw, 1.6rem) !important;
     line-height: 1.25 !important;
     letter-spacing: 0.04em !important;
-    margin-bottom: 0.75rem !important;
+    margin-bottom: 0.85rem !important;
     color: var(--color-near-black) !important;
   }
 
@@ -260,8 +260,8 @@
   }
 
   .hero-cta-wrap a {
-    font-size: 0.68rem !important;
-    letter-spacing: 0.20em !important;
+    font-size: 0.70rem !important;
+    letter-spacing: 0.22em !important;
   }
 
   /* ==============================================
@@ -421,11 +421,47 @@
   }
 
   /* ==============================================
-     FOOTER & DRAWERS
+     FOOTER & DRAWERS (SEPARATE COLUMNS ON MOBILE)
      ============================================== */
   .footer-main-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 2rem 1.5rem !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 2.2rem 1.4rem !important;
+    padding-bottom: 2.6rem !important;
+  }
+
+  .footer-brand-col {
+    grid-column: span 2 !important;
+    padding-bottom: 1.2rem !important;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .footer-brand-col p {
+    max-width: 100% !important;
+    font-size: 0.76rem !important;
+    line-height: 1.55 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .footer-col {
+    min-width: 0;
+  }
+
+  .footer-col h5 {
+    font-size: 0.68rem !important;
+    letter-spacing: 0.18em !important;
+    margin-bottom: 0.9rem !important;
+  }
+
+  .footer-col ul {
+    gap: 0.65rem !important;
+  }
+
+  .footer-col ul li a {
+    font-size: 0.74rem !important;
+  }
+
+  .footer-contact-col a {
+    font-size: 0.74rem !important;
   }
 
   .cart-drawer {
@@ -441,8 +477,8 @@
 /* 4. Small Mobile (< 480px) */
 @media (max-width: 479px) {
   .hero-watermark-text {
-    font-size: clamp(1.9rem, 10.5vw, 2.8rem) !important;
-    letter-spacing: 0.08em !important;
+    font-size: clamp(2.1rem, 9.8vw, 3rem) !important;
+    letter-spacing: 0.12em !important;
   }
 
   .hero-headline {
@@ -460,7 +496,8 @@
   }
 
   .footer-main-grid {
-    grid-template-columns: 1fr !important;
-    gap: 2rem !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.8rem 1.1rem !important;
+    padding-bottom: 2.2rem !important;
   }
 }

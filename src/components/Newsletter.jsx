@@ -175,11 +175,11 @@ export const Newsletter = () => {
             </div>
           </div>
 
-          {/* Right: Follow Us & Social Icons */}
+          {/* Right: Follow Us & Social Icons — hidden (no social accounts) */}
           <div
             className="newsletter-social-col"
             style={{
-              display: "flex",
+              display: "none",
               flexDirection: "column",
               alignItems: "flex-start",
               paddingLeft: "1.5rem"
