@@ -43,7 +43,8 @@ export const siteAssets = {
     zinnia10ml: "/assets/products/zinnia-10ml.jpg",
     herr: "/assets/products/herr.jpg",
     herr10ml: "/assets/products/herr-10ml.jpg",
-    egan: "/assets/products/egan.jpg"
+    egan: "/assets/products/egan.jpg",
+    egan10ml: "/assets/products/egan-10ml.jpg"
   },
 
   // Editorial Story Banners

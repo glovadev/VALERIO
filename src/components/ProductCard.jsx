@@ -55,11 +55,11 @@ export const ProductCard = ({ product, onQuickView }) => {
             objectFit: "contain",
             objectPosition: "center center",
             display: "block",
-            transform: product.volume === "10 ML" && product.category !== "UNISEX" ? "scale(1.55)" : "scale(1)",
+            transform: product.volume === "10 ML" ? "scale(1.55)" : "scale(1)",
             transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)"
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.transform = product.volume === "10 ML" && product.category !== "UNISEX" ? "scale(1.58)" : "scale(1.03)")}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = product.volume === "10 ML" && product.category !== "UNISEX" ? "scale(1.55)" : "scale(1)")}
+          onMouseEnter={(e) => (e.currentTarget.style.transform = product.volume === "10 ML" ? "scale(1.58)" : "scale(1.03)")}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = product.volume === "10 ML" ? "scale(1.55)" : "scale(1)")}
         />
 
         {activeBadge && (

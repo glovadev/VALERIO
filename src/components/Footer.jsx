@@ -2,7 +2,7 @@ import React from "react";
 import { siteConfig } from "../data/siteConfig";
 import { footerLinks } from "../data/navigation";
 
-export const Footer = () => {
+export const Footer = ({ onOpenAdmin }) => {
   return (
     <footer
       id="contact"
@@ -241,6 +241,21 @@ export const Footer = () => {
             >
               Terms &amp; Conditions
             </a>
+            <button
+              onClick={onOpenAdmin}
+              style={{
+                background: "none",
+                border: "none",
+                color: "var(--color-brass)",
+                cursor: "pointer",
+                fontSize: "0.72rem",
+                padding: 0,
+                letterSpacing: "0.08em",
+                fontWeight: 600,
+              }}
+            >
+              Admin Portal
+            </button>
           </div>
         </div>
       </div>

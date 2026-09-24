@@ -226,8 +226,9 @@ export const products = [
     featured: true,
     bestseller: true
   },
+
   {
-    id: "egan",
+    id: "egan-10ml",
     name: "EGAN",
     subtitle: "UNISEX COLLECTION · EDP",
     brand: "VALERIOO",
@@ -238,7 +239,7 @@ export const products = [
     volume: "10 ML",
     badge: null,
     concentration: "Eau de Parfum (EDP)",
-    image: siteAssets.products.egan,
+    image: siteAssets.products.egan10ml,
     variants: null,
     description: "An enigmatic unisex creation balancing zesty bergamot, golden saffron, and radiant fruity notes with a rich heart of amber, rose, jasmine, and exotic spices over a hypnotic foundation of oud, musk, sandalwood, and sweet vanilla.",
     story: "A Scent. A Memory. An Identity.\n\nVALERIOO\nWhere Every Scent Tells an Emotion.\n\nThank You\n♡\n\nFor being a part of our journey.\nYour support means the world to us.\n♡\n\nWITH GRATITUDE,\nVALERIOO\nThe Art of Signature Scent",

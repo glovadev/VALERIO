@@ -2,17 +2,19 @@ import React from "react";
 import { siteConfig } from "../data/siteConfig";
 import { siteAssets } from "../data/assets";
 
-export const Hero = () => {
+export const Hero = ({ heroBg }) => {
+  const activeBg = heroBg || siteAssets.hero.background;
+
   return (
     <section id="hero" className="hero-section">
       {/* Layer 1: Full-Row Responsive 4K Hero Panorama Background */}
       <picture className="hero-panorama-picture">
         <source
           media="(max-width: 767px)"
-          srcSet={siteAssets.hero.mobileBackground || siteAssets.hero.background}
+          srcSet={heroBg || siteAssets.hero.mobileBackground || siteAssets.hero.background}
         />
         <img
-          src={siteAssets.hero.background}
+          src={activeBg}
           alt="Valerioo 5 Signature Fragrance Lineup on Travertine Stone Pedestal"
           className="hero-panorama-bg"
         />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { products } from "../data/products";
 
-export const SearchOverlay = ({ isOpen, onClose, onSelectProduct }) => {
+export const SearchOverlay = ({ isOpen, onClose, onSelectProduct, allProducts = products }) => {
   const [query, setQuery] = useState("");
   const inputRef = useRef(null);
 
@@ -19,7 +19,7 @@ export const SearchOverlay = ({ isOpen, onClose, onSelectProduct }) => {
   if (!isOpen) return null;
 
   const filtered = query.trim()
-    ? products.filter(
+    ? allProducts.filter(
         (p) =>
           p.name.toLowerCase().includes(query.toLowerCase()) ||
           p.subtitle.toLowerCase().includes(query.toLowerCase()) ||

@@ -16,6 +16,10 @@ import { ProductModal } from "./components/ProductModal";
 import { EditorialModal } from "./components/EditorialModal";
 import { WhatsAppButton } from "./components/WhatsAppButton";
 import { StoryPage } from "./components/StoryPage";
+import { AdminModal } from "./components/AdminModal";
+import { products } from "./data/products";
+import { db } from "./firebase/config";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 
 import "./styles/variables.css";
 import "./styles/globals.css";
@@ -44,11 +48,64 @@ const getStoryStateFromHash = (hash) => {
 const MainContent = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [heroBg, setHeroBg] = useState(() => localStorage.getItem("valerioo_hero_bg") || null);
+  const [customProducts, setCustomProducts] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("valerioo_custom_products") || "[]");
+    } catch (e) {
+      return [];
+    }
+  });
   const [selectedProductData, setSelectedProductData] = useState({ product: null, variant: null });
   const [activeCategory, setActiveCategory] = useState(null);
   const [editorialModal, setEditorialModal] = useState({ isOpen: false, type: "campaign" });
 
   const [storyState, setStoryState] = useState(() => getStoryStateFromHash(window.location.hash));
+
+  // Combined product catalog (static + admin added custom products)
+  const allProducts = [...products, ...customProducts];
+
+  useEffect(() => {
+    // Sync hero background & custom products from Firestore on load if available
+    const fetchFirestoreData = async () => {
+      try {
+        const snap = await getDoc(doc(db, "settings", "hero"));
+        if (snap.exists() && snap.data()?.background) {
+          setHeroBg(snap.data().background);
+        }
+
+        const prodsSnap = await getDocs(collection(db, "products"));
+        if (!prodsSnap.empty) {
+          const loadedProds = [];
+          prodsSnap.forEach((d) => loadedProds.push(d.data()));
+          if (loadedProds.length > 0) {
+            setCustomProducts(loadedProds);
+            localStorage.setItem("valerioo_custom_products", JSON.stringify(loadedProds));
+          }
+        }
+      } catch (e) {
+        console.warn("Firestore data fetch notice:", e);
+      }
+    };
+    fetchFirestoreData();
+  }, []);
+
+  const handleAddProduct = (newProd) => {
+    setCustomProducts((prev) => {
+      const updated = [...prev, newProd];
+      localStorage.setItem("valerioo_custom_products", JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const handleDeleteProduct = (prodId) => {
+    setCustomProducts((prev) => {
+      const updated = prev.filter((p) => p.id !== prodId);
+      localStorage.setItem("valerioo_custom_products", JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   const scrollToSection = (targetId) => {
     if (!targetId || targetId === "top" || targetId === "#") {
@@ -76,10 +133,16 @@ const MainContent = () => {
   };
 
   useEffect(() => {
-    const handleHashChange = () => {
-      const rawHash = window.location.hash || "";
+    const handleLocationCheck = () => {
+      const path = (window.location.pathname || "").toLowerCase();
+      const rawHash = (window.location.hash || "").toLowerCase();
+
+      if (path === "/admin" || path === "/admin/" || rawHash === "#admin" || rawHash === "#/admin") {
+        setIsAdminOpen(true);
+        return;
+      }
+
       const story = getStoryStateFromHash(rawHash);
-      
       setStoryState(story);
 
       if (story.isStory) {
@@ -131,16 +194,16 @@ const MainContent = () => {
       }
     };
 
-    window.addEventListener("hashchange", handleHashChange);
+    window.addEventListener("hashchange", handleLocationCheck);
+    window.addEventListener("popstate", handleLocationCheck);
     document.addEventListener("click", handleAnchorClick);
 
     // Initial load check
-    if (window.location.hash) {
-      handleHashChange();
-    }
+    handleLocationCheck();
 
     return () => {
-      window.removeEventListener("hashchange", handleHashChange);
+      window.removeEventListener("hashchange", handleLocationCheck);
+      window.removeEventListener("popstate", handleLocationCheck);
       document.removeEventListener("click", handleAnchorClick);
     };
   }, [storyState.isStory]);
@@ -175,6 +238,15 @@ const MainContent = () => {
 
   const handleSelectCategory = (category) => {
     setActiveCategory(category);
+  };
+
+  const handleCloseAdminPanel = () => {
+    setIsAdminOpen(false);
+    if (window.location.pathname.toLowerCase().startsWith("/admin")) {
+      window.history.pushState(null, "", "/");
+    } else if (window.location.hash.toLowerCase().includes("admin")) {
+      window.location.hash = "";
+    }
   };
 
   return (
@@ -239,7 +311,7 @@ const MainContent = () => {
         /* Main Home Landing Page */
         <>
           {/* 2. Hero Section (Mobile-Optimized & Panoramic) */}
-          <Hero />
+          <Hero heroBg={heroBg} />
 
           {/* 3. Our Collections (2x2 Luxury Mobile Grid) */}
           <Collections onSelectCategory={handleSelectCategory} />
@@ -249,6 +321,7 @@ const MainContent = () => {
 
           {/* 5. Bestsellers Products (Direct WhatsApp Orders) */}
           <Bestsellers
+            allProducts={allProducts}
             activeCategory={activeCategory}
             onSelectCategory={handleSelectCategory}
             onQuickView={(prod, variant) => setSelectedProductData({ product: prod, variant })}
@@ -266,7 +339,7 @@ const MainContent = () => {
       )}
 
       {/* 9. Refined Footer */}
-      <Footer />
+      <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
 
       {/* Cart Slide-in Drawer */}
       <CartDrawer />
@@ -275,6 +348,7 @@ const MainContent = () => {
       <SearchOverlay
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
+        allProducts={allProducts}
         onSelectProduct={(prod) => setSelectedProductData({ product: prod, variant: null })}
       />
 
@@ -297,6 +371,17 @@ const MainContent = () => {
         isOpen={editorialModal.isOpen}
         onClose={handleCloseEditorial}
         type={editorialModal.type}
+      />
+
+      {/* Admin Panel Modal */}
+      <AdminModal
+        isOpen={isAdminOpen}
+        onClose={handleCloseAdminPanel}
+        currentHeroBg={heroBg}
+        onUpdateHeroBg={(newUrl) => setHeroBg(newUrl)}
+        customProducts={customProducts}
+        onAddProduct={handleAddProduct}
+        onDeleteProduct={handleDeleteProduct}
       />
 
       {/* Floating Concierge WhatsApp Button */}

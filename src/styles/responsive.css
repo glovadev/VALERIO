@@ -94,13 +94,13 @@
 
   /* Hero on Tablets */
   .hero-section {
-    min-height: 580px !important;
-    height: 76vh !important;
+    min-height: 460px !important;
+    height: 56vh !important;
   }
 
   .hero-panorama-bg,
   .hero-cutout-layer {
-    object-position: 78% bottom !important;
+    object-position: center bottom !important;
   }
 
   .hero-watermark-text {
@@ -190,17 +190,32 @@
      Clean headroom with subtle luxury watermark
      ============================================== */
   .hero-section {
-    min-height: 440px !important;
-    height: 62vh !important;
-    max-height: 520px !important;
+    min-height: 480px !important;
+    height: 70vh !important;
+    max-height: 560px !important;
     align-items: flex-start !important;
     padding-top: 0 !important;
+    position: relative !important;
+  }
+
+  .hero-panorama-picture {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1 !important;
+    display: block !important;
   }
 
   .hero-panorama-bg,
   .hero-cutout-layer {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
     object-fit: cover !important;
-    object-position: 44% bottom !important;
+    object-position: center bottom !important;
+    display: block !important;
   }
 
   .hero-giant-watermark {
@@ -476,11 +491,6 @@
 
 /* 4. Small Mobile (< 480px) */
 @media (max-width: 479px) {
-  .hero-panorama-bg,
-  .hero-cutout-layer {
-    object-position: 42% bottom !important;
-  }
-
   .hero-watermark-text {
     font-size: clamp(2.1rem, 9.8vw, 3rem) !important;
     letter-spacing: 0.12em !important;

@@ -2,13 +2,13 @@ import React from "react";
 import { products, getBestsellers } from "../data/products";
 import { ProductCard } from "./ProductCard";
 
-export const Bestsellers = ({ activeCategory, onSelectCategory, onQuickView }) => {
+export const Bestsellers = ({ activeCategory, onSelectCategory, onQuickView, allProducts = products }) => {
   const displayedProducts =
     activeCategory === "ALL"
-      ? products
+      ? allProducts
       : activeCategory
-      ? products.filter((p) => p.category.toLowerCase() === activeCategory.toLowerCase())
-      : getBestsellers();
+      ? allProducts.filter((p) => p.category.toLowerCase() === activeCategory.toLowerCase())
+      : allProducts.filter((p) => p.bestseller);
 
   return (
     <section
