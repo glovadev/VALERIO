@@ -11,7 +11,7 @@ export const Hero = ({ heroBg }) => {
       <picture className="hero-panorama-picture">
         <source
           media="(max-width: 767px)"
-          srcSet={heroBg || siteAssets.hero.mobileBackground || siteAssets.hero.background}
+          srcSet={siteAssets.hero.mobileBackground || siteAssets.hero.background}
         />
         <img
           src={activeBg}
