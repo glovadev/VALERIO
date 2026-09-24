@@ -8,7 +8,7 @@ export const ProductModal = ({ product, initialVariant, onClose }) => {
   const { addToCart } = useCart();
 
   useEffect(() => {
-    if (product?.variants) {
+    if (product?.variants && product.variants.length > 1) {
       setSelectedVariant(initialVariant || product.variants[1] || product.variants[0]);
     } else {
       setSelectedVariant(null);
@@ -21,7 +21,7 @@ export const ProductModal = ({ product, initialVariant, onClose }) => {
   const currentPrice = selectedVariant ? selectedVariant.price : product.price;
   const currentMrp = selectedVariant ? selectedVariant.mrp : product.mrp;
   const currentSize = selectedVariant ? selectedVariant.size : product.volume;
-  const currentBadge = selectedVariant?.badge;
+  const currentBadge = selectedVariant?.badge || product.badge;
 
   const handleAddToCart = () => {
     addToCart(product, quantity, selectedVariant);
@@ -173,7 +173,7 @@ export const ProductModal = ({ product, initialVariant, onClose }) => {
             </p>
 
             {/* Size Variants Category Selector */}
-            {product.variants && (
+            {product.variants && product.variants.length > 1 && (
               <div style={{ marginBottom: "1.2rem" }}>
                 <span
                   style={{

@@ -3,12 +3,12 @@ import { sendProductInquiry } from "../utils/whatsapp";
 
 export const ProductCard = ({ product, onQuickView }) => {
   const [selectedVariant, setSelectedVariant] = useState(
-    product.variants ? product.variants[1] || product.variants[0] : null
+    product.variants && product.variants.length > 1 ? product.variants[1] || product.variants[0] : null
   );
 
   const activePrice = selectedVariant ? selectedVariant.price : product.price;
   const activeMrp = selectedVariant ? selectedVariant.mrp : product.mrp;
-  const activeBadge = selectedVariant?.badge;
+  const activeBadge = selectedVariant?.badge || product.badge;
 
   const handleOrderWhatsApp = (e) => {
     e.stopPropagation();
@@ -53,11 +53,13 @@ export const ProductCard = ({ product, onQuickView }) => {
             width: "100%",
             height: "100%",
             objectFit: "contain",
+            objectPosition: "center center",
             display: "block",
+            transform: product.volume === "10 ML" && product.category !== "UNISEX" ? "scale(1.55)" : "scale(1)",
             transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)"
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+          onMouseEnter={(e) => (e.currentTarget.style.transform = product.volume === "10 ML" && product.category !== "UNISEX" ? "scale(1.58)" : "scale(1.03)")}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = product.volume === "10 ML" && product.category !== "UNISEX" ? "scale(1.55)" : "scale(1)")}
         />
 
         {activeBadge && (
@@ -124,11 +126,11 @@ export const ProductCard = ({ product, onQuickView }) => {
             marginBottom: "0.48rem"
           }}
         >
-          {product.subtitle}
+          {product.subtitle} · {product.volume}
         </p>
 
-        {/* Size Selection Categories (10 ML / 20 ML) */}
-        {product.variants && (
+        {/* Size Selection Categories (Only if multiple variants exist) */}
+        {product.variants && product.variants.length > 1 && (
           <div
             style={{
               display: "flex",

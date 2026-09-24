@@ -2,17 +2,17 @@ import { siteAssets } from "./assets";
 
 export const collections = [
   {
-    id: "men",
-    title: "MEN",
+    id: "king",
+    title: "KING",
     subtitle: "Bold & Mysterious",
-    image: siteAssets.collections.men,
+    image: siteAssets.collections.king,
     link: "#collections"
   },
   {
-    id: "women",
-    title: "WOMEN",
+    id: "queen",
+    title: "QUEEN",
     subtitle: "Seductive & Floral",
-    image: siteAssets.collections.women,
+    image: siteAssets.collections.queen,
     link: "#collections"
   },
   {

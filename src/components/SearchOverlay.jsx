@@ -120,7 +120,7 @@ export const SearchOverlay = ({ isOpen, onClose, onSelectProduct }) => {
               Suggested Searches
             </span>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.6rem" }}>
-              {["EGAN", "VIAAN", "SAPPHIRE", "HELIUS", "ZINNIA", "HERR", "MEN", "WOMEN", "UNISEX"].map((tag) => (
+              {["EGAN", "VIAAN", "SAPPHIRE", "HELIUS", "ZINNIA", "HERR", "KING", "QUEEN", "UNISEX"].map((tag) => (
                 <button
                   key={tag}
                   onClick={() => setQuery(tag)}

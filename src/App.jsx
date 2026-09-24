@@ -207,7 +207,21 @@ const MainContent = () => {
       <Header
         onOpenSearch={() => setIsSearchOpen(true)}
         onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
-        onBestsellerNav={() => { handleSelectCategory(null); scrollToSection("bestsellers"); }}
+        onBestsellerNav={() => {
+          handleSelectCategory(null);
+          if (storyState.isStory) {
+            setStoryState({ isStory: false, tab: "about" });
+            window.location.hash = "#bestsellers";
+          }
+          scrollToSection("bestsellers");
+        }}
+        onCollectionsNav={() => {
+          if (storyState.isStory) {
+            setStoryState({ isStory: false, tab: "about" });
+            window.location.hash = "#collections";
+          }
+          scrollToSection("collections");
+        }}
       />
 
       {storyState.isStory ? (

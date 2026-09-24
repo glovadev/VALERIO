@@ -13,8 +13,8 @@ export const navLinks = [
 export const footerLinks = {
   shop: [
     { label: "All Fragrances", href: "#bestsellers" },
-    { label: "Men Collection", href: "#collections" },
-    { label: "Women Collection", href: "#collections" },
+    { label: "King Collection", href: "#collections" },
+    { label: "Queen Collection", href: "#collections" },
     { label: "Unisex Extraits", href: "#collections" },
     { label: "Bestsellers", href: "#bestsellers" }
   ],

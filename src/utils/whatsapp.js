@@ -24,8 +24,10 @@ export const formatProductMessage = (product, quantity = 1, selectedVariant = nu
   const size = selectedVariant?.size || product.volume || "Standard";
   const price = selectedVariant?.price || product.price || 0;
   const formattedPrice = `₹${price.toLocaleString("en-IN")}`;
-  const mrpText = selectedVariant?.mrp && selectedVariant.mrp > price ? ` (MRP: ₹${selectedVariant.mrp.toLocaleString("en-IN")})` : "";
-  const offerText = selectedVariant?.badge ? ` [${selectedVariant.badge}]` : "";
+  const activeMrp = selectedVariant?.mrp || product.mrp;
+  const mrpText = activeMrp && activeMrp > price ? ` (MRP: ₹${activeMrp.toLocaleString("en-IN")})` : "";
+  const badge = selectedVariant?.badge || product.badge;
+  const offerText = badge ? ` [${badge}]` : "";
 
   return `Hello VALERIOO,
 

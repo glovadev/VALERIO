@@ -24,6 +24,8 @@ export const siteAssets = {
 
   // Collections Cards ("Explore the World of Valerioo")
   collections: {
+    king: "/assets/collections/men.jpg",
+    queen: "/assets/collections/women.jpg",
     men: "/assets/collections/men.jpg",
     women: "/assets/collections/women.jpg",
     unisex: "/assets/collections/unisex.jpg",
@@ -33,10 +35,14 @@ export const siteAssets = {
   // Bestsellers & Signature Packshots
   products: {
     viaan: "/assets/products/viaan.jpg",
+    viaan10ml: "/assets/products/viaan-10ml.jpg",
     sapphire: "/assets/products/sapphire.jpg",
+    sapphire10ml: "/assets/products/sapphire-10ml.jpg",
     helius: "/assets/products/helius.jpg",
     zinnia: "/assets/products/zinnia.jpg",
+    zinnia10ml: "/assets/products/zinnia-10ml.jpg",
     herr: "/assets/products/herr.jpg",
+    herr10ml: "/assets/products/herr-10ml.jpg",
     egan: "/assets/products/egan.jpg"
   },
 

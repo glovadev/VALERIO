@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { siteConfig } from "../data/siteConfig";
 
-export const Header = ({ onOpenSearch, onOpenMobileMenu, onBestsellerNav }) => {
+export const Header = ({ onOpenSearch, onOpenMobileMenu, onBestsellerNav, onCollectionsNav }) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export const Header = ({ onOpenSearch, onOpenMobileMenu, onBestsellerNav }) => {
 
         {/* Desktop Left Navigation (3 Items: Collections, Bestsellers, The Art) */}
         <nav className="header-nav-left" aria-label="Primary Navigation">
-          <a href="#collections" className="header-nav-link">
+          <a href="#collections" className="header-nav-link" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCollectionsNav && onCollectionsNav(); }}>
             COLLECTIONS
           </a>
           <a href="#bestsellers" className="header-nav-link" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onBestsellerNav && onBestsellerNav(); }}>

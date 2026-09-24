@@ -200,7 +200,7 @@
   .hero-panorama-bg,
   .hero-cutout-layer {
     object-fit: cover !important;
-    object-position: center bottom !important;
+    object-position: 44% bottom !important;
   }
 
   .hero-giant-watermark {
@@ -476,6 +476,11 @@
 
 /* 4. Small Mobile (< 480px) */
 @media (max-width: 479px) {
+  .hero-panorama-bg,
+  .hero-cutout-layer {
+    object-position: 42% bottom !important;
+  }
+
   .hero-watermark-text {
     font-size: clamp(2.1rem, 9.8vw, 3rem) !important;
     letter-spacing: 0.12em !important;
