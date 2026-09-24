@@ -1,22 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import { siteConfig } from "../data/siteConfig";
 import { siteAssets } from "../data/assets";
 
 export const Hero = ({ heroBg }) => {
   const activeBg = heroBg || siteAssets.hero.background;
+  const [isWideLandscape, setIsWideLandscape] = useState(false);
+  const [heroBgColor, setHeroBgColor] = useState("#FAF2E6");
+
+  const handleImageLoad = (e) => {
+    const img = e.target;
+    if (img.naturalWidth && img.naturalHeight) {
+      setIsWideLandscape(img.naturalWidth / img.naturalHeight > 1.8);
+    }
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = 10;
+      canvas.height = 10;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, 10, 10, 0, 0, 10, 10);
+      const p = ctx.getImageData(5, 2, 1, 1).data;
+      if (p && p[3] > 0) {
+        setHeroBgColor(`rgb(${p[0]}, ${p[1]}, ${p[2]})`);
+      }
+    } catch (_) {
+      setHeroBgColor("#FAF2E6");
+    }
+  };
 
   return (
-    <section id="hero" className="hero-section">
+    <section id="hero" className="hero-section" style={{ backgroundColor: heroBgColor }}>
       {/* Layer 1: Full-Row Responsive 4K Hero Panorama Background */}
       <picture className="hero-panorama-picture">
         <source
           media="(max-width: 767px)"
-          srcSet={siteAssets.hero.mobileBackground || siteAssets.hero.background}
+          srcSet={heroBg || siteAssets.hero.mobileBackground || siteAssets.hero.background}
         />
         <img
           src={activeBg}
           alt="Valerioo 5 Signature Fragrance Lineup on Travertine Stone Pedestal"
-          className="hero-panorama-bg"
+          className={`hero-panorama-bg ${isWideLandscape ? "hero-landscape-mode" : ""}`}
+          crossOrigin="anonymous"
+          onLoad={handleImageLoad}
         />
       </picture>
 
@@ -35,7 +59,7 @@ export const Hero = ({ heroBg }) => {
           src={siteAssets.hero.bottleCutout}
           alt="Valerioo Luxury Flacon Depth"
           aria-hidden="true"
-          className="hero-cutout-layer"
+          className={`hero-cutout-layer ${isWideLandscape ? "hero-landscape-mode" : ""}`}
         />
       ) : null}
 
