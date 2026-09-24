@@ -19,7 +19,7 @@ import { StoryPage } from "./components/StoryPage";
 import { AdminModal } from "./components/AdminModal";
 import { products } from "./data/products";
 import { db } from "./firebase/config";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc, collection, getDocs } from "firebase/firestore";
 
 import "./styles/variables.css";
 import "./styles/globals.css";
@@ -57,6 +57,13 @@ const MainContent = () => {
       return [];
     }
   });
+  const [deletedProductIds, setDeletedProductIds] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("valerioo_deleted_products") || "[]");
+    } catch (e) {
+      return [];
+    }
+  });
   const [selectedProductData, setSelectedProductData] = useState({ product: null, variant: null });
   const [activeCategory, setActiveCategory] = useState(null);
   const [editorialModal, setEditorialModal] = useState({ isOpen: false, type: "campaign" });
@@ -64,15 +71,26 @@ const MainContent = () => {
   const [storyState, setStoryState] = useState(() => getStoryStateFromHash(window.location.hash));
 
   // Combined product catalog (static + admin added custom products)
-  const allProducts = [...products, ...customProducts];
+  const allInitialProducts = [...products, ...customProducts];
+
+  // Live active products after removing deleted ones (real-time instant reflection on client site)
+  const allProducts = allInitialProducts.filter(
+    (p) => !deletedProductIds.includes(p.id)
+  );
 
   useEffect(() => {
-    // Sync hero background & custom products from Firestore on load if available
+    // Sync hero background, deleted products & custom products from Firestore on load if available
     const fetchFirestoreData = async () => {
       try {
         const snap = await getDoc(doc(db, "settings", "hero"));
         if (snap.exists() && snap.data()?.background) {
           setHeroBg(snap.data().background);
+        }
+
+        const delSnap = await getDoc(doc(db, "settings", "deleted_products"));
+        if (delSnap.exists() && Array.isArray(delSnap.data()?.ids)) {
+          setDeletedProductIds(delSnap.data().ids);
+          localStorage.setItem("valerioo_deleted_products", JSON.stringify(delSnap.data().ids));
         }
 
         const prodsSnap = await getDocs(collection(db, "products"));
@@ -92,19 +110,82 @@ const MainContent = () => {
   }, []);
 
   const handleAddProduct = (newProd) => {
+    // 1. Add to custom products
     setCustomProducts((prev) => {
-      const updated = [...prev, newProd];
+      const updated = [...prev.filter((p) => p.id !== newProd.id), newProd];
       localStorage.setItem("valerioo_custom_products", JSON.stringify(updated));
+      return updated;
+    });
+
+    // 2. Ensure product is not marked as deleted
+    setDeletedProductIds((prev) => {
+      const updated = prev.filter((id) => id !== newProd.id);
+      localStorage.setItem("valerioo_deleted_products", JSON.stringify(updated));
+      try {
+        setDoc(doc(db, "settings", "deleted_products"), {
+          ids: updated,
+          updatedAt: new Date().toISOString(),
+        });
+      } catch (e) {}
       return updated;
     });
   };
 
-  const handleDeleteProduct = (prodId) => {
+  const handleDeleteProduct = async (prodId) => {
+    // Immediately close modal if this product is currently inspected
+    if (selectedProductData.product?.id === prodId) {
+      setSelectedProductData({ product: null, variant: null });
+    }
+
+    // 1. Mark ID as deleted immediately (instant 0ms disappearance from client site)
+    setDeletedProductIds((prev) => {
+      const updated = prev.includes(prodId) ? prev : [...prev, prodId];
+      localStorage.setItem("valerioo_deleted_products", JSON.stringify(updated));
+      try {
+        setDoc(doc(db, "settings", "deleted_products"), {
+          ids: updated,
+          updatedAt: new Date().toISOString(),
+        });
+      } catch (e) {}
+      return updated;
+    });
+
+    // 2. If it's a custom product, also remove from custom products
     setCustomProducts((prev) => {
       const updated = prev.filter((p) => p.id !== prodId);
       localStorage.setItem("valerioo_custom_products", JSON.stringify(updated));
       return updated;
     });
+
+    // 3. Remove from Firestore if custom product
+    try {
+      await deleteDoc(doc(db, "products", prodId));
+    } catch (e) {}
+  };
+
+  const handleRestoreProduct = async (prodId) => {
+    setDeletedProductIds((prev) => {
+      const updated = prev.filter((id) => id !== prodId);
+      localStorage.setItem("valerioo_deleted_products", JSON.stringify(updated));
+      try {
+        setDoc(doc(db, "settings", "deleted_products"), {
+          ids: updated,
+          updatedAt: new Date().toISOString(),
+        });
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const handleResetAllProducts = async () => {
+    setDeletedProductIds([]);
+    localStorage.removeItem("valerioo_deleted_products");
+    try {
+      await setDoc(doc(db, "settings", "deleted_products"), {
+        ids: [],
+        updatedAt: new Date().toISOString(),
+      });
+    } catch (e) {}
   };
 
   const scrollToSection = (targetId) => {
@@ -379,9 +460,14 @@ const MainContent = () => {
         onClose={handleCloseAdminPanel}
         currentHeroBg={heroBg}
         onUpdateHeroBg={(newUrl) => setHeroBg(newUrl)}
+        allProducts={allProducts}
+        allInitialProducts={allInitialProducts}
+        deletedProductIds={deletedProductIds}
         customProducts={customProducts}
         onAddProduct={handleAddProduct}
         onDeleteProduct={handleDeleteProduct}
+        onRestoreProduct={handleRestoreProduct}
+        onResetAllProducts={handleResetAllProducts}
       />
 
       {/* Floating Concierge WhatsApp Button */}
