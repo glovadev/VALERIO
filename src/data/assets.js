@@ -44,7 +44,7 @@ export const siteAssets = {
     herr: "/assets/products/herr.jpg",
     herr10ml: "/assets/products/herr-10ml.jpg",
     egan: "/assets/products/egan.jpg",
-    egan10ml: "/assets/products/egan-10ml.jpg"
+    egan10ml: "/assets/products/egan-10ml.jpg?v=3"
   },
 
   // Editorial Story Banners
