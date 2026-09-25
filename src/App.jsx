@@ -213,6 +213,17 @@ const MainContent = () => {
     performScroll();
   };
 
+  const handleOpenAdminPanel = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    try {
+      window.history.pushState({ panel: "admin" }, "", "/admin");
+    } catch {
+      // fallback
+    }
+    window.location.hash = "#/admin";
+    setIsAdminOpen(true);
+  };
+
   useEffect(() => {
     const handleLocationCheck = () => {
       const path = (window.location.pathname || "").toLowerCase();
@@ -221,6 +232,8 @@ const MainContent = () => {
       if (path === "/admin" || path === "/admin/" || rawHash === "#admin" || rawHash === "#/admin") {
         setIsAdminOpen(true);
         return;
+      } else {
+        setIsAdminOpen(false);
       }
 
       const story = getStoryStateFromHash(rawHash);
@@ -246,6 +259,12 @@ const MainContent = () => {
       if (!anchor) return;
       
       const href = anchor.getAttribute("href") || "";
+      if (href === "/admin" || href === "/admin/" || href === "#admin" || href === "#/admin") {
+        e.preventDefault();
+        handleOpenAdminPanel();
+        return;
+      }
+
       // If it's a section anchor on the landing page (#bestsellers, #collections, #contact, etc.)
       if (href.startsWith("#") && !href.startsWith("#/")) {
         const cleanTarget = href.replace(/^#/, "").toLowerCase();
@@ -325,8 +344,9 @@ const MainContent = () => {
     setIsAdminOpen(false);
     if (window.location.pathname.toLowerCase().startsWith("/admin")) {
       window.history.pushState(null, "", "/");
-    } else if (window.location.hash.toLowerCase().includes("admin")) {
-      window.location.hash = "";
+    }
+    if (window.location.hash.toLowerCase().includes("admin")) {
+      window.history.pushState(null, "", window.location.pathname === "/admin" ? "/" : window.location.pathname);
     }
   };
 
@@ -420,7 +440,7 @@ const MainContent = () => {
       )}
 
       {/* 9. Refined Footer */}
-      <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
+      <Footer onOpenAdmin={handleOpenAdminPanel} />
 
       {/* Cart Slide-in Drawer */}
       <CartDrawer />

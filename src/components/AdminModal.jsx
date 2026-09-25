@@ -407,35 +407,105 @@ export const AdminModal = ({
         style={{
           backgroundColor: "#FAF8F5",
           width: "100%",
-          maxWidth: "680px",
-          borderRadius: "4px",
-          boxShadow: "0 20px 50px rgba(0,0,0,0.35)",
+          maxWidth: "780px",
+          borderRadius: "6px",
+          boxShadow: "0 25px 60px rgba(0,0,0,0.45)",
           border: "1px solid var(--color-border, #E6DFD5)",
-          padding: "2rem 1.8rem",
+          padding: "1.8rem 1.8rem 2.2rem",
           position: "relative",
-          maxHeight: "92vh",
+          maxHeight: "94vh",
           overflowY: "auto",
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          aria-label="Close Admin Panel"
+        {/* Top Navigation & Status Bar */}
+        <div
           style={{
-            position: "absolute",
-            top: "1.2rem",
-            right: "1.2rem",
-            fontSize: "1.6rem",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            color: "#181614",
-            lineHeight: 1,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            paddingBottom: "1rem",
+            marginBottom: "1.2rem",
+            borderBottom: "1px solid rgba(209, 199, 189, 0.4)",
           }}
         >
-          &times;
-        </button>
+          <button
+            onClick={onClose}
+            aria-label="Return to Store"
+            title="Return to Storefront"
+            style={{
+              background: "none",
+              border: "1px solid rgba(122, 114, 105, 0.25)",
+              color: "var(--color-near-black, #181614)",
+              cursor: "pointer",
+              fontSize: "0.74rem",
+              fontWeight: 600,
+              letterSpacing: "0.05em",
+              padding: "5px 12px",
+              borderRadius: "3px",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              transition: "all 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "var(--color-near-black, #181614)";
+              e.currentTarget.style.backgroundColor = "rgba(24, 22, 20, 0.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(122, 114, 105, 0.25)";
+              e.currentTarget.style.backgroundColor = "transparent";
+            }}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Return to Store
+          </button>
+
+          <span
+            style={{
+              fontSize: "0.68rem",
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              color: "var(--color-brass, #C5A059)",
+              fontWeight: 600,
+              backgroundColor: "rgba(197, 160, 89, 0.1)",
+              padding: "4px 10px",
+              borderRadius: "12px",
+              border: "1px solid rgba(197, 160, 89, 0.25)",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "5px",
+            }}
+          >
+            <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "var(--color-brass, #C5A059)" }}></span>
+            Dedicated Admin Portal (/admin)
+          </span>
+
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            aria-label="Close Admin Panel"
+            title="Close Panel"
+            style={{
+              fontSize: "1.4rem",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "#181614",
+              lineHeight: 1,
+              padding: "2px 6px",
+              opacity: 0.7,
+              transition: "opacity 0.2s ease",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = 1)}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = 0.7)}
+          >
+            &times;
+          </button>
+        </div>
 
         {/* Header Title */}
         <div style={{ marginBottom: "1.5rem", textAlign: "center" }}>

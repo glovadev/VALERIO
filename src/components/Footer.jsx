@@ -154,18 +154,48 @@ export const Footer = ({ onOpenAdmin }) => {
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               {footerLinks.customer.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    style={{
-                      fontSize: "0.78rem",
-                      color: "var(--color-muted-brown)",
-                      transition: "color 0.2s ease"
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-brass)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-muted-brown)")}
-                  >
-                    {link.label}
-                  </a>
+                  {link.href === "/admin" ? (
+                    <a
+                      href="/admin"
+                      id="footer-nav-admin-link"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onOpenAdmin();
+                      }}
+                      title="Open Dedicated Admin Panel"
+                      style={{
+                        fontSize: "0.78rem",
+                        color: "var(--color-brass)",
+                        transition: "color 0.2s ease",
+                        cursor: "pointer",
+                        fontWeight: 600,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px"
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-near-black)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-brass)")}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.9 }}>
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                      {link.label}
+                    </a>
+                  ) : (
+                    <a
+                      href={link.href}
+                      style={{
+                        fontSize: "0.78rem",
+                        color: "var(--color-muted-brown)",
+                        transition: "color 0.2s ease"
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-brass)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-muted-brown)")}
+                    >
+                      {link.label}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>
@@ -222,11 +252,11 @@ export const Footer = ({ onOpenAdmin }) => {
             &copy; {new Date().getFullYear()} {siteConfig.tagline}. All rights reserved.
           </div>
 
-          <div style={{ display: "flex", gap: "2rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "1.6rem", flexWrap: "wrap" }}>
             <a
               href="#privacy"
               onClick={(e) => { e.preventDefault(); alert("Valerioo Privacy Policy: Client confidentiality and security is our foremost priority."); }}
-              style={{ color: "var(--color-muted-brown)" }}
+              style={{ color: "var(--color-muted-brown)", transition: "color 0.2s ease" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-near-black)")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-muted-brown)")}
             >
@@ -235,27 +265,57 @@ export const Footer = ({ onOpenAdmin }) => {
             <a
               href="#terms"
               onClick={(e) => { e.preventDefault(); alert("Valerioo Terms: Orders placed via WhatsApp are confirmed directly by client concierges."); }}
-              style={{ color: "var(--color-muted-brown)" }}
+              style={{ color: "var(--color-muted-brown)", transition: "color 0.2s ease" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-near-black)")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-muted-brown)")}
             >
               Terms &amp; Conditions
             </a>
-            <button
-              onClick={onOpenAdmin}
+            <a
+              href="/admin"
+              id="footer-admin-panel-link"
+              onClick={(e) => {
+                e.preventDefault();
+                onOpenAdmin();
+              }}
+              title="Redirect to dedicated Admin Panel"
+              aria-label="Redirect to dedicated Admin Panel"
               style={{
-                background: "none",
-                border: "none",
-                color: "var(--color-brass)",
-                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                color: "var(--color-brass, #C5A059)",
+                textDecoration: "none",
                 fontSize: "0.72rem",
-                padding: 0,
-                letterSpacing: "0.08em",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
                 fontWeight: 600,
+                cursor: "pointer",
+                padding: "5px 12px",
+                borderRadius: "3px",
+                border: "1px solid rgba(197, 160, 89, 0.4)",
+                backgroundColor: "rgba(197, 160, 89, 0.08)",
+                transition: "all 0.25s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-brass, #C5A059)";
+                e.currentTarget.style.backgroundColor = "rgba(197, 160, 89, 0.18)";
+                e.currentTarget.style.color = "var(--color-near-black, #181614)";
+                e.currentTarget.style.transform = "translateY(-1px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(197, 160, 89, 0.4)";
+                e.currentTarget.style.backgroundColor = "rgba(197, 160, 89, 0.08)";
+                e.currentTarget.style.color = "var(--color-brass, #C5A059)";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
-              Admin Portal
-            </button>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              Admin Panel
+            </a>
           </div>
         </div>
       </div>
