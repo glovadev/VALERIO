@@ -218,18 +218,20 @@ const MainContent = () => {
     try {
       window.history.pushState({ panel: "admin" }, "", "/admin");
     } catch {
-      // fallback
+      window.location.hash = "#/admin";
     }
-    window.location.hash = "#/admin";
     setIsAdminOpen(true);
   };
 
   useEffect(() => {
     const handleLocationCheck = () => {
-      const path = (window.location.pathname || "").toLowerCase();
-      const rawHash = (window.location.hash || "").toLowerCase();
+      const path = (window.location.pathname || "").toLowerCase().replace(/\/+$/, "");
+      const rawHash = (window.location.hash || "").toLowerCase().replace(/\/+$/, "");
 
-      if (path === "/admin" || path === "/admin/" || rawHash === "#admin" || rawHash === "#/admin") {
+      // Admin portal is ONLY activated when the user specifically enters /admin or #/admin
+      const isAdminRoute = path.endsWith("/admin") || rawHash === "#admin" || rawHash === "#/admin";
+
+      if (isAdminRoute) {
         setIsAdminOpen(true);
         return;
       } else {
@@ -342,11 +344,14 @@ const MainContent = () => {
 
   const handleCloseAdminPanel = () => {
     setIsAdminOpen(false);
-    if (window.location.pathname.toLowerCase().startsWith("/admin")) {
-      window.history.pushState(null, "", "/");
-    }
-    if (window.location.hash.toLowerCase().includes("admin")) {
-      window.history.pushState(null, "", window.location.pathname === "/admin" ? "/" : window.location.pathname);
+    try {
+      const cleanPath = window.location.pathname.replace(/\/admin\/?$/i, "") || "/";
+      window.history.replaceState(null, "", cleanPath);
+      if (window.location.hash.toLowerCase().includes("admin")) {
+        window.location.hash = "";
+      }
+    } catch {
+      window.location.hash = "";
     }
   };
 
@@ -440,7 +445,7 @@ const MainContent = () => {
       )}
 
       {/* 9. Refined Footer */}
-      <Footer onOpenAdmin={handleOpenAdminPanel} />
+      <Footer />
 
       {/* Cart Slide-in Drawer */}
       <CartDrawer />

@@ -129,7 +129,7 @@ export const AdminModal = ({
               await signOut(auth);
               setUser(null);
               setAuthError(
-                "Something went wrong. Access denied: This email is not authorized as an administrator in Firebase."
+                "Something went wrong. Access denied: This email is not authorized as an administrator."
               );
               return;
             }
@@ -544,6 +544,9 @@ export const AdminModal = ({
   const deletedProductsList = (allInitialProducts || []).filter((p) =>
     (deletedProductIds || []).includes(p.id)
   );
+
+  // Strictly do not render modal into DOM if not opened
+  if (!isOpen) return null;
 
   return (
     <div
@@ -1901,7 +1904,7 @@ export const AdminModal = ({
                   Security & Admin Credentials
                 </h3>
                 <p style={{ fontSize: "0.78rem", color: "#666", margin: "0 0 1.2rem 0", lineHeight: 1.5 }}>
-                  Admin accounts are authenticated through <strong>Firebase Authentication</strong>. Only accounts registered or updated directly in Firebase can access this management panel.
+                  Admin accounts are authenticated through secure cloud credentials. Only authorized accounts registered by system administrators can access this management panel.
                 </p>
 
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1rem", marginBottom: "1.2rem" }}>
@@ -1914,7 +1917,7 @@ export const AdminModal = ({
                       {user?.email}
                     </strong>
                     <span style={{ fontSize: "0.72rem", color: "#2E7D32", display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                      ● Active Firebase Session
+                      ● Active Authenticated Session
                     </span>
                   </div>
 
@@ -1938,7 +1941,7 @@ export const AdminModal = ({
                     Password Management
                   </h4>
                   <p style={{ fontSize: "0.78rem", color: "#666", margin: "0 0 1rem 0", lineHeight: 1.4 }}>
-                    Need to change or reset your administrator password? Send a secure Firebase password reset link directly to your registered email (<strong>{user?.email}</strong>).
+                    Need to change or reset your administrator password? Send a secure password reset link directly to your registered email (<strong>{user?.email}</strong>).
                   </p>
 
                   {resetSuccess && (
@@ -1977,14 +1980,14 @@ export const AdminModal = ({
                   </button>
                 </div>
 
-                {/* Firebase Synchronization Policy */}
+                {/* Authentication Policy */}
                 <div style={{ backgroundColor: "#F9F6F0", border: "1px solid #E6DFD5", padding: "1rem", borderRadius: "3px", fontSize: "0.76rem", color: "#555", lineHeight: 1.5 }}>
                   <strong style={{ color: "#181614", display: "block", marginBottom: "4px" }}>
-                    ℹ️ How Firebase Admin Recognition Works:
+                    ℹ️ How Administrator Authentication Works:
                   </strong>
                   <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
-                    <li>All admin accounts are authenticated directly against Firebase Authentication.</li>
-                    <li>If you change or update the email address in Firebase Console (Authentication &gt; Users), the system automatically considers the new email for signing in and password resets.</li>
+                    <li>All administrator accounts are authenticated directly against authorized cloud credentials.</li>
+                    <li>If you change or update the email address, the system automatically considers the new email for signing in and password resets.</li>
                     <li>Public registration is strictly disabled. No unauthorized visitor can register an admin account.</li>
                   </ul>
                 </div>

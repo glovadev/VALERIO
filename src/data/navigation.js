@@ -28,7 +28,7 @@ export const footerLinks = {
   customer: [
     { label: "WhatsApp Concierge", href: "#contact" },
     { label: "Shipping & Delivery", href: "#features" },
-    { label: "Direct Inquiries", href: "#contact" },
-    { label: "Admin Panel", href: "/admin" }
+    { label: "Direct Inquiries", href: "#contact" }
   ]
 };
+
