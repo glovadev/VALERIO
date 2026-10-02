@@ -1,7 +1,11 @@
-// ImgBB upload utility
-const IMGBB_API_KEY = "b9ab2a771f7fcb58b4c568a93094470d";
+// ImgBB upload utility using environment variables
+const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
 
 export const uploadToImgBB = async (file) => {
+  if (!IMGBB_API_KEY) {
+    throw new Error("ImgBB API key is missing. Please set VITE_IMGBB_API_KEY in your environment.");
+  }
+
   const formData = new FormData();
   formData.append("image", file);
 

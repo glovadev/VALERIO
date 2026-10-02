@@ -1,0 +1,32 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: verify user is authenticated via Firebase Auth
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Products catalog:
+    // Anyone browsing the site can read products
+    // Only authenticated administrators can add, edit, or delete products
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // Settings (Hero background image, deleted products tracking):
+    // Public visitors need to read to see custom hero & active product catalog
+    // Only authenticated administrators can update settings
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // Default fallback: deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

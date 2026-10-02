@@ -3,12 +3,12 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBBaPOFSBK8WQx8iFzZpDjpBX8XktDgzt4",
-  authDomain: "valerioo-perfume.firebaseapp.com",
-  projectId: "valerioo-perfume",
-  storageBucket: "valerioo-perfume.firebasestorage.app",
-  messagingSenderId: "714400540597",
-  appId: "1:714400540597:web:2eb4834ae825ac42079bfc"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);

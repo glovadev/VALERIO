@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { auth, db } from "../firebase/config";
 import {
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-import { doc, setDoc, deleteDoc, collection, getDocs } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc, collection, getDocs } from "firebase/firestore";
 import { uploadToImgBB } from "../utils/imgbb";
 
 export const AdminModal = ({
@@ -24,14 +24,33 @@ export const AdminModal = ({
   onResetAllProducts,
 }) => {
   const [user, setUser] = useState(null);
-  const [activeTab, setActiveTab] = useState("hero"); // 'hero' | 'add-product' | 'delete-products'
+  const [activeTab, setActiveTab] = useState("hero"); // 'hero' | 'add-product' | 'delete-products' | 'security'
 
   // Auth States
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSignUp, setIsSignUp] = useState(false);
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
+
+  // Rate Limiting States (2-minute penalty after 4 failed attempts continually)
+  const [failCount, setFailCount] = useState(() => {
+    return Number(localStorage.getItem("valerioo_admin_fail_count") || 0);
+  });
+  const [lockoutUntil, setLockoutUntil] = useState(() => {
+    return Number(localStorage.getItem("valerioo_admin_lockout_until") || 0);
+  });
+  const [remainingSeconds, setRemainingSeconds] = useState(() => {
+    const lockUntil = Number(localStorage.getItem("valerioo_admin_lockout_until") || 0);
+    const now = Date.now();
+    return lockUntil > now ? Math.ceil((lockUntil - now) / 1000) : 0;
+  });
+
+  // Password Reset States
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetSuccess, setResetSuccess] = useState("");
+  const [resetError, setResetError] = useState("");
 
   // Hero Upload states
   const [selectedFile, setSelectedFile] = useState(null);
@@ -68,42 +87,183 @@ export const AdminModal = ({
   const [actionFeedback, setActionFeedback] = useState(null);
   const [showDeletedArchive, setShowDeletedArchive] = useState(false);
 
+  // Live Countdown Timer for Rate Limiting (2-minute lockout)
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setAuthError("");
+    if (!lockoutUntil) return;
+
+    const checkLockout = () => {
+      const now = Date.now();
+      if (lockoutUntil > now) {
+        setRemainingSeconds(Math.ceil((lockoutUntil - now) / 1000));
+      } else {
+        setRemainingSeconds(0);
+        setLockoutUntil(0);
+        setFailCount(0);
+        localStorage.removeItem("valerioo_admin_lockout_until");
+        localStorage.removeItem("valerioo_admin_fail_count");
+        setAuthError("");
+      }
+    };
+
+    checkLockout();
+    const interval = setInterval(checkLockout, 1000);
+    return () => clearInterval(interval);
+  }, [lockoutUntil]);
+
+  // Auth State Listener with dynamic verification
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        // Dynamic check: if Firestore defines authorized admins, verify email is allowed
+        try {
+          const adminDoc = await getDoc(doc(db, "settings", "admins"));
+          if (adminDoc.exists()) {
+            const data = adminDoc.data();
+            const allowed = (data?.emails || data?.allowedEmails || []).map((e) =>
+              String(e).toLowerCase().trim()
+            );
+            if (
+              allowed.length > 0 &&
+              !allowed.includes((currentUser.email || "").toLowerCase().trim())
+            ) {
+              await signOut(auth);
+              setUser(null);
+              setAuthError(
+                "Something went wrong. Access denied: This email is not authorized as an administrator in Firebase."
+              );
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn("Firestore admin check warning:", e);
+        }
+
+        setUser(currentUser);
+        setAuthError("");
+        setFailCount(0);
+        setLockoutUntil(0);
+        setRemainingSeconds(0);
+        localStorage.removeItem("valerioo_admin_fail_count");
+        localStorage.removeItem("valerioo_admin_lockout_until");
+      } else {
+        setUser(null);
+      }
     });
     return () => unsubscribe();
   }, []);
 
-  if (!isOpen) return null;
+  const isLockedOut = remainingSeconds > 0;
+
+  const formatRemainingTime = (totalSecs) => {
+    const m = Math.floor(totalSecs / 60);
+    const s = totalSecs % 60;
+    return m > 0 ? `${m}m ${s < 10 ? "0" : ""}${s}s` : `${s}s`;
+  };
 
   const handleAuth = async (e) => {
     e.preventDefault();
     setAuthError("");
+
+    if (isLockedOut) {
+      setAuthError(
+        `Access is temporarily locked. Please try again in ${formatRemainingTime(remainingSeconds)}.`
+      );
+      return;
+    }
+
     setAuthLoading(true);
 
     try {
-      if (isSignUp) {
-        await createUserWithEmailAndPassword(auth, email, password);
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
+
+      // Verify against Firestore settings/admins if configured
+      try {
+        const adminDoc = await getDoc(doc(db, "settings", "admins"));
+        if (adminDoc.exists()) {
+          const data = adminDoc.data();
+          const allowed = (data?.emails || data?.allowedEmails || []).map((e) =>
+            String(e).toLowerCase().trim()
+          );
+          if (
+            allowed.length > 0 &&
+            !allowed.includes((userCredential.user.email || "").toLowerCase().trim())
+          ) {
+            await signOut(auth);
+            setUser(null);
+            throw new Error("unauthorized-admin");
+          }
+        }
+      } catch (err) {
+        if (err.message === "unauthorized-admin") throw err;
       }
+
+      // Login successful: reset rate limiter state
       setEmail("");
       setPassword("");
+      setFailCount(0);
+      setLockoutUntil(0);
+      setRemainingSeconds(0);
+      localStorage.removeItem("valerioo_admin_fail_count");
+      localStorage.removeItem("valerioo_admin_lockout_until");
     } catch (err) {
-      console.error("Firebase auth error:", err);
-      if (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password" || err.code === "auth/user-not-found") {
-        setAuthError("Invalid email or password. If you don't have an account, click 'Register Admin Account'.");
-      } else if (err.code === "auth/email-already-in-use") {
-        setAuthError("An account with this email already exists. Please sign in instead.");
-      } else if (err.code === "auth/weak-password") {
-        setAuthError("Password should be at least 6 characters.");
+      console.error("Authentication error:", err);
+      const nextFail = failCount + 1;
+
+      if (nextFail >= 4) {
+        const lockUntil = Date.now() + 2 * 60 * 1000; // 2 minutes (120s)
+        localStorage.setItem("valerioo_admin_lockout_until", lockUntil.toString());
+        localStorage.setItem("valerioo_admin_fail_count", "4");
+        setLockoutUntil(lockUntil);
+        setFailCount(4);
+        setRemainingSeconds(120);
+        setAuthError(
+          "Too many failed login attempts. Access is temporarily locked. Please try again later."
+        );
       } else {
-        setAuthError(err.message || "Failed to authenticate.");
+        localStorage.setItem("valerioo_admin_fail_count", nextFail.toString());
+        setFailCount(nextFail);
+        setAuthError("Something went wrong. Invalid email or password.");
       }
     } finally {
       setAuthLoading(false);
+    }
+  };
+
+  const handlePasswordReset = async (e) => {
+    e.preventDefault();
+    setResetError("");
+    setResetSuccess("");
+
+    if (isLockedOut) {
+      setResetError(
+        `Access is temporarily locked. Please try again in ${formatRemainingTime(remainingSeconds)}.`
+      );
+      return;
+    }
+
+    const targetEmail = resetEmail.trim();
+    if (!targetEmail) {
+      setResetError("Please enter your registered administrator email address.");
+      return;
+    }
+
+    setResetLoading(true);
+
+    try {
+      await sendPasswordResetEmail(auth, targetEmail);
+      setResetSuccess(
+        `If this email address is registered, password reset instructions have been sent. Please check your inbox and spam folder.`
+      );
+      setResetError("");
+    } catch (err) {
+      console.error("Password reset error:", err);
+      if (err.code === "auth/too-many-requests") {
+        setResetError("Too many requests. Please wait a few minutes before trying again.");
+      } else {
+        setResetError("Something went wrong. Please check the email address and try again.");
+      }
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -537,76 +697,245 @@ export const AdminModal = ({
         </div>
 
         {!user ? (
-          /* LOGIN / REGISTER FORM */
-          <form onSubmit={handleAuth} style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
-            <p style={{ fontSize: "0.82rem", color: "#666", textAlign: "center", margin: "0 0 0.5rem" }}>
-              {isSignUp ? "Create a new Admin account using Firebase" : "Sign in with your Firebase admin account to manage products & hero section"}
-            </p>
-
-            {authError && (
-              <div style={{ backgroundColor: "#FFF2F2", color: "#D93025", border: "1px solid #F8C4C4", padding: "0.8rem 1rem", fontSize: "0.8rem", borderRadius: "3px" }}>
-                {authError}
+          isForgotPassword ? (
+            /* FORGOT PASSWORD FORM */
+            <form onSubmit={handlePasswordReset} style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+              <div style={{ textAlign: "center", marginBottom: "0.2rem" }}>
+                <h3 style={{ fontFamily: "var(--font-serif, serif)", fontSize: "1.1rem", margin: "0 0 0.4rem 0", color: "#181614" }}>
+                  Reset Admin Password
+                </h3>
+                <p style={{ fontSize: "0.8rem", color: "#666", margin: 0, lineHeight: 1.4 }}>
+                  Enter your registered administrator email address. We'll send you a secure link to reset your password.
+                </p>
               </div>
-            )}
 
-            <div>
-              <label style={{ display: "block", fontSize: "0.72rem", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.4rem", fontWeight: 600, color: "#181614" }}>
-                Admin Email
-              </label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@valerioo.com"
-                style={{ width: "100%", padding: "0.75rem 1rem", fontSize: "0.9rem", border: "1px solid #D1C7BD", borderRadius: "2px", backgroundColor: "#FFF", outline: "none" }}
-              />
-            </div>
+              {/* Rate limit lockout warning */}
+              {isLockedOut && (
+                <div style={{ backgroundColor: "#FFF2F2", color: "#D93025", border: "1px solid #F8C4C4", padding: "0.85rem 1rem", fontSize: "0.8rem", borderRadius: "3px", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span style={{ fontSize: "1.1rem" }}>⏳</span>
+                  <div>
+                    <strong>Access Temporarily Locked:</strong> Please wait <strong>{formatRemainingTime(remainingSeconds)}</strong> before requesting password reset.
+                  </div>
+                </div>
+              )}
 
-            <div>
-              <label style={{ display: "block", fontSize: "0.72rem", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.4rem", fontWeight: 600, color: "#181614" }}>
-                Password
-              </label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                style={{ width: "100%", padding: "0.75rem 1rem", fontSize: "0.9rem", border: "1px solid #D1C7BD", borderRadius: "2px", backgroundColor: "#FFF", outline: "none" }}
-              />
-            </div>
+              {resetSuccess && (
+                <div style={{ backgroundColor: "#E8F5E9", color: "#2E7D32", border: "1px solid #C8E6C9", padding: "0.85rem 1rem", fontSize: "0.82rem", borderRadius: "3px", lineHeight: 1.4 }}>
+                  <strong>Success:</strong> {resetSuccess}
+                </div>
+              )}
 
-            <button
-              type="submit"
-              disabled={authLoading}
-              style={{
-                marginTop: "0.5rem",
-                padding: "0.85rem",
-                backgroundColor: "#181614",
-                color: "#FAF8F5",
-                border: "none",
-                fontSize: "0.82rem",
-                letterSpacing: "0.2em",
-                textTransform: "uppercase",
-                fontWeight: 600,
-                cursor: authLoading ? "not-allowed" : "pointer",
-                opacity: authLoading ? 0.7 : 1,
-              }}
-            >
-              {authLoading ? "Processing..." : isSignUp ? "Register Admin Account" : "Sign In to Admin Panel"}
-            </button>
+              {resetError && (
+                <div style={{ backgroundColor: "#FFF2F2", color: "#D93025", border: "1px solid #F8C4C4", padding: "0.85rem 1rem", fontSize: "0.8rem", borderRadius: "3px", lineHeight: 1.4 }}>
+                  {resetError}
+                </div>
+              )}
 
-            <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "0.72rem", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.4rem", fontWeight: 600, color: "#181614" }}>
+                  Administrator Email
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={resetEmail}
+                  disabled={isLockedOut || resetLoading}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  placeholder="admin@valerioo.com"
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem 1rem",
+                    fontSize: "0.9rem",
+                    border: "1px solid #D1C7BD",
+                    borderRadius: "2px",
+                    backgroundColor: isLockedOut ? "#F5F5F5" : "#FFF",
+                    outline: "none",
+                  }}
+                />
+              </div>
+
               <button
-                type="button"
-                onClick={() => { setIsSignUp(!isSignUp); setAuthError(""); }}
-                style={{ background: "none", border: "none", fontSize: "0.78rem", color: "var(--color-brass, #C5A059)", textDecoration: "underline", cursor: "pointer" }}
+                type="submit"
+                disabled={resetLoading || isLockedOut}
+                style={{
+                  marginTop: "0.4rem",
+                  padding: "0.85rem",
+                  backgroundColor: "#181614",
+                  color: "#FAF8F5",
+                  border: "none",
+                  fontSize: "0.82rem",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  fontWeight: 600,
+                  cursor: resetLoading || isLockedOut ? "not-allowed" : "pointer",
+                  opacity: resetLoading || isLockedOut ? 0.6 : 1,
+                  transition: "opacity 0.2s ease",
+                }}
               >
-                {isSignUp ? "Already have an account? Sign In" : "Need an account? Register Admin Account"}
+                {resetLoading ? "Sending Email..." : isLockedOut ? `Locked (${formatRemainingTime(remainingSeconds)})` : "Send Password Reset Link"}
               </button>
-            </div>
-          </form>
+
+              <div style={{ textAlign: "center", marginTop: "0.4rem" }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsForgotPassword(false);
+                    setResetError("");
+                    setResetSuccess("");
+                  }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "0.78rem",
+                    color: "var(--color-brass, #C5A059)",
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  ← Back to Admin Sign In
+                </button>
+              </div>
+            </form>
+          ) : (
+            /* LOGIN FORM (STRICT SECURE AUTH - NO PUBLIC SIGN UP) */
+            <form onSubmit={handleAuth} style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
+              <p style={{ fontSize: "0.82rem", color: "#666", textAlign: "center", margin: "0 0 0.4rem" }}>
+                Sign in with your administrator credentials to manage products & hero section.
+              </p>
+
+              {/* Rate Limit Active Notice */}
+              {isLockedOut && (
+                <div
+                  style={{
+                    backgroundColor: "#FFF2F2",
+                    color: "#D93025",
+                    border: "1px solid #F8C4C4",
+                    padding: "0.9rem 1rem",
+                    borderRadius: "3px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  <span style={{ fontSize: "1.3rem" }}>🔒</span>
+                  <div style={{ fontSize: "0.82rem", lineHeight: 1.4 }}>
+                    <strong>Access Temporarily Locked:</strong> Too many failed attempts. Please wait{" "}
+                    <span style={{ fontWeight: 700, fontSize: "0.92rem" }}>
+                      {formatRemainingTime(remainingSeconds)}
+                    </span>{" "}
+                    before attempting to sign in again.
+                  </div>
+                </div>
+              )}
+
+              {authError && (
+                <div
+                  style={{
+                    backgroundColor: "#FFF2F2",
+                    color: "#D93025",
+                    border: "1px solid #F8C4C4",
+                    padding: "0.8rem 1rem",
+                    fontSize: "0.8rem",
+                    borderRadius: "3px",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {authError}
+                </div>
+              )}
+
+              <div>
+                <label style={{ display: "block", fontSize: "0.72rem", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.4rem", fontWeight: 600, color: "#181614" }}>
+                  Administrator Email
+                </label>
+                <input
+                  type="email"
+                  required
+                  disabled={isLockedOut || authLoading}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@valerioo.com"
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem 1rem",
+                    fontSize: "0.9rem",
+                    border: "1px solid #D1C7BD",
+                    borderRadius: "2px",
+                    backgroundColor: isLockedOut ? "#F5F5F5" : "#FFF",
+                    outline: "none",
+                  }}
+                />
+              </div>
+
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
+                  <label style={{ fontSize: "0.72rem", letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 600, color: "#181614" }}>
+                    Password
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsForgotPassword(true);
+                      setResetEmail(email);
+                      setAuthError("");
+                      setResetError("");
+                      setResetSuccess("");
+                    }}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      fontSize: "0.72rem",
+                      color: "var(--color-brass, #C5A059)",
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                      padding: 0,
+                    }}
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
+                <input
+                  type="password"
+                  required
+                  disabled={isLockedOut || authLoading}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem 1rem",
+                    fontSize: "0.9rem",
+                    border: "1px solid #D1C7BD",
+                    borderRadius: "2px",
+                    backgroundColor: isLockedOut ? "#F5F5F5" : "#FFF",
+                    outline: "none",
+                  }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={authLoading || isLockedOut}
+                style={{
+                  marginTop: "0.5rem",
+                  padding: "0.85rem",
+                  backgroundColor: "#181614",
+                  color: "#FAF8F5",
+                  border: "none",
+                  fontSize: "0.82rem",
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  fontWeight: 600,
+                  cursor: authLoading || isLockedOut ? "not-allowed" : "pointer",
+                  opacity: authLoading || isLockedOut ? 0.6 : 1,
+                  transition: "opacity 0.2s ease",
+                }}
+              >
+                {authLoading ? "Authenticating..." : isLockedOut ? `Locked (${formatRemainingTime(remainingSeconds)})` : "Sign In to Admin Panel"}
+              </button>
+            </form>
+          )
         ) : (
           /* AUTHENTICATED ADMIN PANEL */
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -707,6 +1036,26 @@ export const AdminModal = ({
                 >
                   {allProducts.length}
                 </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab("security")}
+                style={{
+                  padding: "0.6rem 0.9rem",
+                  border: "none",
+                  borderBottom: activeTab === "security" ? "2px solid var(--color-brass, #C5A059)" : "none",
+                  backgroundColor: "transparent",
+                  color: activeTab === "security" ? "#181614" : "#888",
+                  fontWeight: activeTab === "security" ? 600 : 400,
+                  fontSize: "0.75rem",
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                  marginBottom: "-2px",
+                }}
+              >
+                Security & Accounts
               </button>
             </div>
 
@@ -1542,6 +1891,103 @@ export const AdminModal = ({
                     )}
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* TAB 4: SECURITY & ADMIN ACCOUNTS */}
+            {activeTab === "security" && (
+              <div style={{ border: "1px solid #E6DFD5", padding: "1.4rem", backgroundColor: "#FFFFFF", borderRadius: "3px" }}>
+                <h3 style={{ fontFamily: "var(--font-serif, serif)", fontSize: "1.05rem", fontWeight: 600, margin: "0 0 0.4rem 0", color: "#181614" }}>
+                  Security & Admin Credentials
+                </h3>
+                <p style={{ fontSize: "0.78rem", color: "#666", margin: "0 0 1.2rem 0", lineHeight: 1.5 }}>
+                  Admin accounts are authenticated through <strong>Firebase Authentication</strong>. Only accounts registered or updated directly in Firebase can access this management panel.
+                </p>
+
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1rem", marginBottom: "1.2rem" }}>
+                  {/* Active Admin Profile */}
+                  <div style={{ border: "1px solid #ECE6DE", padding: "1rem", borderRadius: "3px", backgroundColor: "#FAF8F5" }}>
+                    <span style={{ display: "block", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.15em", color: "#888", marginBottom: "4px" }}>
+                      Authenticated Administrator
+                    </span>
+                    <strong style={{ display: "block", fontSize: "0.95rem", color: "#181614", marginBottom: "4px" }}>
+                      {user?.email}
+                    </strong>
+                    <span style={{ fontSize: "0.72rem", color: "#2E7D32", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                      ● Active Firebase Session
+                    </span>
+                  </div>
+
+                  {/* Rate Limiting Status */}
+                  <div style={{ border: "1px solid #ECE6DE", padding: "1rem", borderRadius: "3px", backgroundColor: "#FAF8F5" }}>
+                    <span style={{ display: "block", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.15em", color: "#888", marginBottom: "4px" }}>
+                      Brute-Force Rate Limiting
+                    </span>
+                    <strong style={{ display: "block", fontSize: "0.95rem", color: "#181614", marginBottom: "4px" }}>
+                      Active (2-Min Lockout / 4 Tries)
+                    </strong>
+                    <span style={{ fontSize: "0.72rem", color: "#666" }}>
+                      Failed attempts continually tracked in client storage
+                    </span>
+                  </div>
+                </div>
+
+                {/* Password Reset Action */}
+                <div style={{ border: "1px solid #ECE6DE", padding: "1.2rem", borderRadius: "3px", backgroundColor: "#FFFFFF", marginBottom: "1.2rem" }}>
+                  <h4 style={{ margin: "0 0 0.4rem 0", fontSize: "0.88rem", fontWeight: 600, color: "#181614" }}>
+                    Password Management
+                  </h4>
+                  <p style={{ fontSize: "0.78rem", color: "#666", margin: "0 0 1rem 0", lineHeight: 1.4 }}>
+                    Need to change or reset your administrator password? Send a secure Firebase password reset link directly to your registered email (<strong>{user?.email}</strong>).
+                  </p>
+
+                  {resetSuccess && (
+                    <div style={{ backgroundColor: "#E8F5E9", color: "#2E7D32", border: "1px solid #C8E6C9", padding: "0.75rem 1rem", fontSize: "0.8rem", borderRadius: "3px", marginBottom: "0.8rem" }}>
+                      {resetSuccess}
+                    </div>
+                  )}
+
+                  {resetError && (
+                    <div style={{ backgroundColor: "#FFF2F2", color: "#D93025", border: "1px solid #F8C4C4", padding: "0.75rem 1rem", fontSize: "0.8rem", borderRadius: "3px", marginBottom: "0.8rem" }}>
+                      {resetError}
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setResetEmail(user?.email || "");
+                      handlePasswordReset({ preventDefault: () => {} });
+                    }}
+                    disabled={resetLoading}
+                    style={{
+                      padding: "0.65rem 1.1rem",
+                      backgroundColor: "#181614",
+                      color: "#FAF8F5",
+                      border: "none",
+                      fontSize: "0.72rem",
+                      letterSpacing: "0.15em",
+                      textTransform: "uppercase",
+                      fontWeight: 600,
+                      cursor: resetLoading ? "not-allowed" : "pointer",
+                      opacity: resetLoading ? 0.7 : 1,
+                    }}
+                  >
+                    {resetLoading ? "Dispatching Reset Email..." : "Send Password Reset Link To My Email"}
+                  </button>
+                </div>
+
+                {/* Firebase Synchronization Policy */}
+                <div style={{ backgroundColor: "#F9F6F0", border: "1px solid #E6DFD5", padding: "1rem", borderRadius: "3px", fontSize: "0.76rem", color: "#555", lineHeight: 1.5 }}>
+                  <strong style={{ color: "#181614", display: "block", marginBottom: "4px" }}>
+                    ℹ️ How Firebase Admin Recognition Works:
+                  </strong>
+                  <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
+                    <li>All admin accounts are authenticated directly against Firebase Authentication.</li>
+                    <li>If you change or update the email address in Firebase Console (Authentication &gt; Users), the system automatically considers the new email for signing in and password resets.</li>
+                    <li>Public registration is strictly disabled. No unauthorized visitor can register an admin account.</li>
+                  </ul>
+                </div>
               </div>
             )}
           </div>
