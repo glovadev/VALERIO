@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 scratch/
+*.zip
 
 # Environment and sensitive keys
 .env

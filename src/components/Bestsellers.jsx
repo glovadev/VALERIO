@@ -3,12 +3,38 @@ import { products, getBestsellers } from "../data/products";
 import { ProductCard } from "./ProductCard";
 
 export const Bestsellers = ({ activeCategory, onSelectCategory, onQuickView, allProducts = products }) => {
+  const isCategoryMatch = (productCategory, filterCategory) => {
+    if (!filterCategory || filterCategory === "ALL") return true;
+    const pCat = (productCategory || "").toUpperCase().trim();
+    const fCat = filterCategory.toUpperCase().trim();
+    if (pCat === fCat) return true;
+    if (
+      (fCat === "UNISEX" || fCat === "UNISEX & COMBO" || fCat === "COMBO") &&
+      (pCat === "UNISEX" || pCat === "UNISEX & COMBO" || pCat === "COMBO")
+    ) {
+      return true;
+    }
+    if ((fCat === "KING" || fCat === "MEN") && (pCat === "KING" || pCat === "MEN")) return true;
+    if ((fCat === "QUEEN" || fCat === "WOMEN") && (pCat === "QUEEN" || pCat === "WOMEN")) return true;
+    return false;
+  };
+
   const displayedProducts =
     activeCategory === "ALL"
       ? allProducts
       : activeCategory
-      ? allProducts.filter((p) => p.category.toLowerCase() === activeCategory.toLowerCase())
+      ? allProducts.filter((p) => isCategoryMatch(p.category, activeCategory))
       : allProducts.filter((p) => p.bestseller);
+
+  const getSectionHeading = () => {
+    if (activeCategory === "ALL") return "ALL COLLECTIONS";
+    if (!activeCategory) return "BESTSELLERS";
+    const upper = activeCategory.toUpperCase().trim();
+    if (upper === "UNISEX" || upper === "UNISEX & COMBO") {
+      return "UNISEX & COMBO";
+    }
+    return `${activeCategory} COLLECTION`;
+  };
 
   return (
     <section
@@ -50,7 +76,7 @@ export const Bestsellers = ({ activeCategory, onSelectCategory, onQuickView, all
                 margin: 0
               }}
             >
-              {activeCategory === "ALL" ? "ALL COLLECTIONS" : activeCategory && activeCategory !== "ALL" ? `${activeCategory} COLLECTION` : "BESTSELLERS"}
+              {getSectionHeading()}
             </h2>
           </div>
 

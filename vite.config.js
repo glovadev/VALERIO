@@ -3,10 +3,15 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/',
   plugins: [react()],
   server: {
     watch: {
-      ignored: ['**/scratch/**', '**/*.png', '**/*.jpg']
+      ignored: ['**/scratch/**']
     }
+  },
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true
   }
 })

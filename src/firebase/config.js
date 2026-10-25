@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
@@ -11,7 +11,32 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const isFirebaseConfigured = Boolean(
+  firebaseConfig.apiKey &&
+  firebaseConfig.apiKey !== "your_firebase_api_key_here" &&
+  firebaseConfig.projectId &&
+  firebaseConfig.projectId !== "your_project_id"
+);
+
+let app = null;
+let auth = null;
+let db = null;
+
+if (isFirebaseConfigured) {
+  try {
+    app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+  } catch (error) {
+    console.warn("Firebase initialization failed:", error);
+    app = null;
+    auth = null;
+    db = null;
+  }
+} else {
+  console.info("Firebase is not fully configured (running in local/demo mode with localStorage).");
+}
+
+export { app, auth, db };
 export default app;
+

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd
+        http://www.google.com/schemas/sitemap-image/1.1
+        http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://valerioo.in/</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    
+    <!-- Hero Banner Image -->
+    <image:image>
+      <image:loc>https://valerioo.in/assets/hero/hero-section-image.png</image:loc>
+      <image:title>VALERIOO Luxury Fragrance Lineup</image:title>
+      <image:caption>Signature Artisanal Extraits de Parfum on Travertine Stone Pedestal</image:caption>
+    </image:image>
+    
+    <!-- Product Images -->
+    <image:image>
+      <image:loc>https://valerioo.in/assets/products/viaan.jpg</image:loc>
+      <image:title>VALERIOO VIAAN Eau de Parfum - King Collection</image:title>
+      <image:caption>A fragrance of distinction with pink pepper, orange blossom, coffee, and vanilla accords.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://valerioo.in/assets/products/sapphire.jpg</image:loc>
+      <image:title>VALERIOO SAPPHIRE Eau de Parfum - King Collection</image:title>
+      <image:caption>A scent of depth, warmth and timeless elegance with saffron, jasmine, amberwood, and cedar.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://valerioo.in/assets/products/helius.jpg</image:loc>
+      <image:title>VALERIOO HELIUS Eau de Parfum - King Collection</image:title>
+      <image:caption>Radiant citrus and woody amber fragrance for men.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://valerioo.in/assets/products/zinnia.jpg</image:loc>
+      <image:title>VALERIOO ZINNIA Eau de Parfum - Queen Collection</image:title>
+      <image:caption>Seductive floral extrait de parfum with delicate rose and white flower blossoms.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://valerioo.in/assets/products/herr.jpg</image:loc>
+      <image:title>VALERIOO HERR Eau de Parfum - Queen Collection</image:title>
+      <image:caption>Sensual vanilla, warm musk and delicate bloom fragrance for women.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://valerioo.in/assets/products/egan.jpg</image:loc>
+      <image:title>VALERIOO EGAN Eau de Parfum - Unisex &amp; Combo Collection</image:title>
+      <image:caption>Harmonious and timeless genderless bespoke fragrance.</image:caption>
+    </image:image>
+
+    <!-- Collection Banners -->
+    <image:image>
+      <image:loc>https://valerioo.in/assets/collections/men.jpg</image:loc>
+      <image:title>VALERIOO King Collection</image:title>
+      <image:caption>Bold, mysterious, and masculine luxury fragrances.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://valerioo.in/assets/collections/women.jpg</image:loc>
+      <image:title>VALERIOO Queen Collection</image:title>
+      <image:caption>Seductive, delicate, and sophisticated feminine floral fragrances.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://valerioo.in/assets/collections/unisex.jpg</image:loc>
+      <image:title>VALERIOO Unisex &amp; Combo Collection</image:title>
+      <image:caption>Harmonious, universal olfactory compositions.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://valerioo.in/assets/collections/bestsellers.jpg</image:loc>
+      <image:title>VALERIOO Bestsellers Collection</image:title>
+      <image:caption>Most coveted signature fragrances from House of Valerioo.</image:caption>
+    </image:image>
+  </url>
+
+</urlset>

@@ -17,7 +17,7 @@ export const collections = [
   },
   {
     id: "unisex",
-    title: "UNISEX",
+    title: "UNISEX & COMBO",
     subtitle: "Harmonious & Timeless",
     image: siteAssets.collections.unisex,
     link: "#collections"

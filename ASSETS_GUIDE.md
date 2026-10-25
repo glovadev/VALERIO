@@ -34,7 +34,7 @@ If you want to use a new filename (e.g. `my-new-perfume.jpg`):
 | **Hero 3D Cutout** | `public/assets/hero/hero-bottle-cutout-panoramic.png` | PNG (transp.) | 1920 × 860 px | Bottle cutout layer that overlaps brand typography |
 | **Collections: Men** | `public/assets/collections/men.jpg` | JPG | 800 × 1000 px (4:5) | Men collection card on pedestal |
 | **Collections: Women** | `public/assets/collections/women.jpg` | JPG | 800 × 1000 px (4:5) | Women collection card on pedestal |
-| **Collections: Unisex** | `public/assets/collections/unisex.jpg` | JPG | 800 × 1000 px (4:5) | Unisex collection card on pedestal |
+| **Collections: Unisex & Combo** | `public/assets/collections/unisex.jpg` | JPG | 800 × 1000 px (4:5) | Unisex & Combo collection card on pedestal |
 | **Collections: Bestsellers** | `public/assets/collections/bestsellers.jpg` | JPG | 800 × 1000 px (4:5) | Bestsellers collection card on pedestal |
 | **Bestsellers: Noir Intense** | `public/assets/products/noir-intense.jpg` | JPG | 1200 × 1016 px | Black glass bottle packshot on warm studio background |
 | **Bestsellers: Oud Royale** | `public/assets/products/oud-royale.jpg` | JPG | 1200 × 1016 px | Amber glass + gold cap packshot on warm studio background |

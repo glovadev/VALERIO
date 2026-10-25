@@ -112,26 +112,29 @@ export const AdminModal = ({
 
   // Auth State Listener with dynamic verification
   useEffect(() => {
+    if (!auth) return;
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         // Dynamic check: if Firestore defines authorized admins, verify email is allowed
         try {
-          const adminDoc = await getDoc(doc(db, "settings", "admins"));
-          if (adminDoc.exists()) {
-            const data = adminDoc.data();
-            const allowed = (data?.emails || data?.allowedEmails || []).map((e) =>
-              String(e).toLowerCase().trim()
-            );
-            if (
-              allowed.length > 0 &&
-              !allowed.includes((currentUser.email || "").toLowerCase().trim())
-            ) {
-              await signOut(auth);
-              setUser(null);
-              setAuthError(
-                "Something went wrong. Access denied: This email is not authorized as an administrator."
+          if (db) {
+            const adminDoc = await getDoc(doc(db, "settings", "admins"));
+            if (adminDoc.exists()) {
+              const data = adminDoc.data();
+              const allowed = (data?.emails || data?.allowedEmails || []).map((e) =>
+                String(e).toLowerCase().trim()
               );
-              return;
+              if (
+                allowed.length > 0 &&
+                !allowed.includes((currentUser.email || "").toLowerCase().trim())
+              ) {
+                await signOut(auth);
+                setUser(null);
+                setAuthError(
+                  "Something went wrong. Access denied: This email is not authorized as an administrator."
+                );
+                return;
+              }
             }
           }
         } catch (e) {
@@ -171,30 +174,37 @@ export const AdminModal = ({
       return;
     }
 
+    if (!auth) {
+      setAuthError("Firebase authentication is not configured yet. Please configure your .env file with your Firebase credentials.");
+      return;
+    }
+
     setAuthLoading(true);
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
 
       // Verify against Firestore settings/admins if configured
-      try {
-        const adminDoc = await getDoc(doc(db, "settings", "admins"));
-        if (adminDoc.exists()) {
-          const data = adminDoc.data();
-          const allowed = (data?.emails || data?.allowedEmails || []).map((e) =>
-            String(e).toLowerCase().trim()
-          );
-          if (
-            allowed.length > 0 &&
-            !allowed.includes((userCredential.user.email || "").toLowerCase().trim())
-          ) {
-            await signOut(auth);
-            setUser(null);
-            throw new Error("unauthorized-admin");
+      if (db) {
+        try {
+          const adminDoc = await getDoc(doc(db, "settings", "admins"));
+          if (adminDoc.exists()) {
+            const data = adminDoc.data();
+            const allowed = (data?.emails || data?.allowedEmails || []).map((e) =>
+              String(e).toLowerCase().trim()
+            );
+            if (
+              allowed.length > 0 &&
+              !allowed.includes((userCredential.user.email || "").toLowerCase().trim())
+            ) {
+              await signOut(auth);
+              setUser(null);
+              throw new Error("unauthorized-admin");
+            }
           }
+        } catch (err) {
+          if (err.message === "unauthorized-admin") throw err;
         }
-      } catch (err) {
-        if (err.message === "unauthorized-admin") throw err;
       }
 
       // Login successful: reset rate limiter state
@@ -247,6 +257,11 @@ export const AdminModal = ({
       return;
     }
 
+    if (!auth) {
+      setResetError("Firebase authentication is not configured yet. Please configure your .env file with your Firebase credentials.");
+      return;
+    }
+
     setResetLoading(true);
 
     try {
@@ -269,7 +284,10 @@ export const AdminModal = ({
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
+      if (auth) {
+        await signOut(auth);
+      }
+      setUser(null);
       setUploadSuccess("");
       setUploadError("");
       setSelectedFile(null);
@@ -323,14 +341,16 @@ export const AdminModal = ({
 
       localStorage.setItem("valerioo_hero_bg", newImageUrl);
 
-      try {
-        await setDoc(doc(db, "settings", "hero"), {
-          background: newImageUrl,
-          updatedAt: new Date().toISOString(),
-          updatedBy: user.email,
-        });
-      } catch (firestoreErr) {
-        console.warn("Firestore hero sync notice:", firestoreErr);
+      if (db && user) {
+        try {
+          await setDoc(doc(db, "settings", "hero"), {
+            background: newImageUrl,
+            updatedAt: new Date().toISOString(),
+            updatedBy: user.email,
+          });
+        } catch (firestoreErr) {
+          console.warn("Firestore hero sync notice:", firestoreErr);
+        }
       }
 
       onUpdateHeroBg(newImageUrl);
@@ -347,12 +367,14 @@ export const AdminModal = ({
 
   const handleResetDefaultHero = async () => {
     localStorage.removeItem("valerioo_hero_bg");
-    try {
-      await setDoc(doc(db, "settings", "hero"), {
-        background: null,
-        updatedAt: new Date().toISOString(),
-      });
-    } catch (e) {}
+    if (db) {
+      try {
+        await setDoc(doc(db, "settings", "hero"), {
+          background: null,
+          updatedAt: new Date().toISOString(),
+        });
+      } catch (e) {}
+    }
     onUpdateHeroBg(null);
     setUploadSuccess("Hero section reset to default image.");
     setUploadError("");
@@ -427,11 +449,13 @@ export const AdminModal = ({
         createdAt: new Date().toISOString(),
       };
 
-      // 3. Save to Firestore
-      try {
-        await setDoc(doc(db, "products", newProdId), newProduct);
-      } catch (fsErr) {
-        console.warn("Firestore product save notice:", fsErr);
+      // 3. Save to Firestore if available
+      if (db) {
+        try {
+          await setDoc(doc(db, "products", newProdId), newProduct);
+        } catch (fsErr) {
+          console.warn("Firestore product save notice:", fsErr);
+        }
       }
 
       // 4. Update parent & local state immediately
@@ -516,9 +540,9 @@ export const AdminModal = ({
   // Filter products for the Delete / Manage Tab
   const filteredProducts = allProducts.filter((p) => {
     // 1. Category / Section Filter
-    if (manageSectionFilter === "KING" && p.category?.toUpperCase() !== "KING") return false;
-    if (manageSectionFilter === "QUEEN" && p.category?.toUpperCase() !== "QUEEN") return false;
-    if (manageSectionFilter === "UNISEX" && p.category?.toUpperCase() !== "UNISEX") return false;
+    if (manageSectionFilter === "KING" && p.category?.toUpperCase() !== "KING" && p.category?.toUpperCase() !== "MEN") return false;
+    if (manageSectionFilter === "QUEEN" && p.category?.toUpperCase() !== "QUEEN" && p.category?.toUpperCase() !== "WOMEN") return false;
+    if (manageSectionFilter === "UNISEX" && p.category?.toUpperCase() !== "UNISEX" && p.category?.toUpperCase() !== "UNISEX & COMBO" && p.category?.toUpperCase() !== "COMBO") return false;
     if (manageSectionFilter === "BESTSELLERS" && !p.bestseller) return false;
 
     // 2. Search Query
@@ -535,9 +559,12 @@ export const AdminModal = ({
   });
 
   // Calculate live counts for section filters
-  const kingCount = allProducts.filter((p) => p.category?.toUpperCase() === "KING").length;
-  const queenCount = allProducts.filter((p) => p.category?.toUpperCase() === "QUEEN").length;
-  const unisexCount = allProducts.filter((p) => p.category?.toUpperCase() === "UNISEX").length;
+  const kingCount = allProducts.filter((p) => p.category?.toUpperCase() === "KING" || p.category?.toUpperCase() === "MEN").length;
+  const queenCount = allProducts.filter((p) => p.category?.toUpperCase() === "QUEEN" || p.category?.toUpperCase() === "WOMEN").length;
+  const unisexCount = allProducts.filter((p) => {
+    const cat = p.category?.toUpperCase();
+    return cat === "UNISEX" || cat === "UNISEX & COMBO" || cat === "COMBO";
+  }).length;
   const bestsellerCount = allProducts.filter((p) => p.bestseller).length;
 
   // Deleted products for trash/restoration view
@@ -1165,7 +1192,7 @@ export const AdminModal = ({
                     >
                       <option value="KING">KING (Men)</option>
                       <option value="QUEEN">QUEEN (Women)</option>
-                      <option value="UNISEX">UNISEX</option>
+                      <option value="UNISEX">UNISEX & COMBO</option>
                     </select>
                   </div>
                 </div>
@@ -1411,7 +1438,7 @@ export const AdminModal = ({
                     </span>
                   </div>
                   <p style={{ fontSize: "0.78rem", color: "#666", margin: 0, lineHeight: 1.45 }}>
-                    Delete any product from any section (KING, QUEEN, UNISEX, Bestsellers). Deletions are processed
+                    Delete any product from any section (KING, QUEEN, UNISEX & COMBO, Bestsellers). Deletions are processed
                     with high performance and removed from the client website immediately.
                   </p>
                 </div>
@@ -1487,7 +1514,7 @@ export const AdminModal = ({
                       { key: "ALL", label: `All Sections (${allProducts.length})` },
                       { key: "KING", label: `KING (${kingCount})` },
                       { key: "QUEEN", label: `QUEEN (${queenCount})` },
-                      { key: "UNISEX", label: `UNISEX (${unisexCount})` },
+                      { key: "UNISEX", label: `UNISEX & COMBO (${unisexCount})` },
                       { key: "BESTSELLERS", label: `★ Bestsellers (${bestsellerCount})` },
                     ].map((sec) => (
                       <button
@@ -1644,7 +1671,7 @@ export const AdminModal = ({
                                         : "#3E3B36",
                                   }}
                                 >
-                                  {p.category} COLLECTION
+                                  {p.category?.toUpperCase() === "UNISEX" || p.category?.toUpperCase() === "UNISEX & COMBO" ? "UNISEX & COMBO" : `${p.category} COLLECTION`}
                                 </span>
 
                                 {/* Bestseller Tag */}
@@ -1846,7 +1873,7 @@ export const AdminModal = ({
                                     {dp.name} ({dp.volume})
                                   </strong>
                                   <span style={{ fontSize: "0.68rem", color: "#999", display: "block" }}>
-                                    {dp.category} COLLECTION · ₹{dp.price}
+                                    {dp.category?.toUpperCase() === "UNISEX" || dp.category?.toUpperCase() === "UNISEX & COMBO" ? "UNISEX & COMBO" : `${dp.category} COLLECTION`} · ₹{dp.price}
                                   </span>
                                 </div>
                               </div>

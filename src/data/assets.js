@@ -17,7 +17,7 @@ export const siteAssets = {
 
   // Hero Section
   hero: {
-    background: "/assets/hero/hero-5-bottles-4k.jpg",
+    background: "/assets/hero/hero-section-image.png",
     mobileBackground: "/assets/hero/hero-5-bottles-mobile-4k.jpg",
     bottleCutout: ""
   },

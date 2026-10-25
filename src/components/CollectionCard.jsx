@@ -61,14 +61,16 @@ export const CollectionCard = ({ collection, onClick }) => {
         }}
       >
         <h3
+          className="collection-card-title"
           style={{
             fontFamily: "var(--font-serif)",
-            fontSize: "clamp(0.95rem, 1.15vw, 1.15rem)",
+            fontSize: "clamp(0.86rem, 1.1vw, 1.12rem)",
             fontWeight: 400,
-            letterSpacing: "0.22em",
+            letterSpacing: "0.18em",
             textTransform: "uppercase",
             color: "#FAF8F5",
-            margin: 0
+            margin: 0,
+            lineHeight: 1.25
           }}
         >
           {collection.title}

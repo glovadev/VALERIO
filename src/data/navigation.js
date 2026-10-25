@@ -15,7 +15,7 @@ export const footerLinks = {
     { label: "All Fragrances", href: "#bestsellers" },
     { label: "King Collection", href: "#collections" },
     { label: "Queen Collection", href: "#collections" },
-    { label: "Unisex Extraits", href: "#collections" },
+    { label: "Unisex & Combo Collection", href: "#collections" },
     { label: "Bestsellers", href: "#bestsellers" }
   ],
   about: [

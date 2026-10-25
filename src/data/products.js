@@ -230,7 +230,7 @@ export const products = [
   {
     id: "egan-10ml",
     name: "EGAN",
-    subtitle: "UNISEX COLLECTION · EDP",
+    subtitle: "UNISEX & COMBO · EDP",
     brand: "VALERIOO",
     tagline: "A Scent. A Memory. An Identity.",
     category: "UNISEX",
@@ -258,9 +258,15 @@ export const getBestsellers = () => products.filter(p => p.bestseller);
 export const getProductById = (id) => products.find(p => p.id === id);
 export const getProductsByCategory = (category) => {
   if (!category || category === "ALL") return products;
-  const cat = category.toLowerCase();
+  const cat = category.toUpperCase().trim();
   return products.filter(p => {
-    const pCat = p.category.toLowerCase();
-    return pCat === cat || (cat === "king" && pCat === "men") || (cat === "queen" && pCat === "women") || (cat === "men" && pCat === "king") || (cat === "women" && pCat === "queen");
+    const pCat = (p.category || "").toUpperCase().trim();
+    return (
+      pCat === cat ||
+      ((cat === "UNISEX" || cat === "UNISEX & COMBO" || cat === "COMBO") &&
+        (pCat === "UNISEX" || pCat === "UNISEX & COMBO" || pCat === "COMBO")) ||
+      ((cat === "KING" || cat === "MEN") && (pCat === "KING" || pCat === "MEN")) ||
+      ((cat === "QUEEN" || cat === "WOMEN") && (pCat === "QUEEN" || pCat === "WOMEN"))
+    );
   });
 };

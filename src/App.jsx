@@ -81,6 +81,7 @@ const MainContent = () => {
   useEffect(() => {
     // Sync hero background, deleted products & custom products from Firestore on load if available
     const fetchFirestoreData = async () => {
+      if (!db) return;
       try {
         const snap = await getDoc(doc(db, "settings", "hero"));
         if (snap.exists() && snap.data()?.background) {
@@ -121,12 +122,14 @@ const MainContent = () => {
     setDeletedProductIds((prev) => {
       const updated = prev.filter((id) => id !== newProd.id);
       localStorage.setItem("valerioo_deleted_products", JSON.stringify(updated));
-      try {
-        setDoc(doc(db, "settings", "deleted_products"), {
-          ids: updated,
-          updatedAt: new Date().toISOString(),
-        });
-      } catch (e) {}
+      if (db) {
+        try {
+          setDoc(doc(db, "settings", "deleted_products"), {
+            ids: updated,
+            updatedAt: new Date().toISOString(),
+          });
+        } catch (e) {}
+      }
       return updated;
     });
   };
@@ -141,12 +144,14 @@ const MainContent = () => {
     setDeletedProductIds((prev) => {
       const updated = prev.includes(prodId) ? prev : [...prev, prodId];
       localStorage.setItem("valerioo_deleted_products", JSON.stringify(updated));
-      try {
-        setDoc(doc(db, "settings", "deleted_products"), {
-          ids: updated,
-          updatedAt: new Date().toISOString(),
-        });
-      } catch (e) {}
+      if (db) {
+        try {
+          setDoc(doc(db, "settings", "deleted_products"), {
+            ids: updated,
+            updatedAt: new Date().toISOString(),
+          });
+        } catch (e) {}
+      }
       return updated;
     });
 
@@ -158,21 +163,25 @@ const MainContent = () => {
     });
 
     // 3. Remove from Firestore if custom product
-    try {
-      await deleteDoc(doc(db, "products", prodId));
-    } catch (e) {}
+    if (db) {
+      try {
+        await deleteDoc(doc(db, "products", prodId));
+      } catch (e) {}
+    }
   };
 
   const handleRestoreProduct = async (prodId) => {
     setDeletedProductIds((prev) => {
       const updated = prev.filter((id) => id !== prodId);
       localStorage.setItem("valerioo_deleted_products", JSON.stringify(updated));
-      try {
-        setDoc(doc(db, "settings", "deleted_products"), {
-          ids: updated,
-          updatedAt: new Date().toISOString(),
-        });
-      } catch (e) {}
+      if (db) {
+        try {
+          setDoc(doc(db, "settings", "deleted_products"), {
+            ids: updated,
+            updatedAt: new Date().toISOString(),
+          });
+        } catch (e) {}
+      }
       return updated;
     });
   };
@@ -180,12 +189,14 @@ const MainContent = () => {
   const handleResetAllProducts = async () => {
     setDeletedProductIds([]);
     localStorage.removeItem("valerioo_deleted_products");
-    try {
-      await setDoc(doc(db, "settings", "deleted_products"), {
-        ids: [],
-        updatedAt: new Date().toISOString(),
-      });
-    } catch (e) {}
+    if (db) {
+      try {
+        await setDoc(doc(db, "settings", "deleted_products"), {
+          ids: [],
+          updatedAt: new Date().toISOString(),
+        });
+      } catch (e) {}
+    }
   };
 
   const scrollToSection = (targetId) => {
